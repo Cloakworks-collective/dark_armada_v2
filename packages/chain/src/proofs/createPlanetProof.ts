@@ -4,7 +4,7 @@ import {
     Experimental
  } from 'o1js';
 
-import { CreatePlanetPublicOutput } from "../models";
+import { CreatePlanetPublicOutput } from "../lib/models";
 import { CreatePlanetUtils } from '../utils/createPlanet';
 
 export function planetValidator(

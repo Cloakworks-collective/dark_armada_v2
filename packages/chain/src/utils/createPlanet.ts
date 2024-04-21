@@ -1,7 +1,7 @@
 import { Field, Poseidon, MerkleMapWitness } from 'o1js';
 
-import { Consts } from '../consts';
-import { Errors } from '../errors';
+import { Consts } from '../lib/consts';
+import { Errors } from '../lib/errors';
 
 export class CreatePlanetUtils {
     
