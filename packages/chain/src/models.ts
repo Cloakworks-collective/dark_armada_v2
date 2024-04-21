@@ -34,12 +34,12 @@ export class Planet extends Struct({
   }){};
 
 
-  /** Proof outputs */
-
+  /** Proof input and outputs */
+  
   export class CreatePlanetPublicOutput extends Struct({
     locationHash: Field,
     faction: Field,
   }) {}; 
 
-  
+
   
