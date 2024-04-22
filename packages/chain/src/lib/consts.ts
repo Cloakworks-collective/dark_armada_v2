@@ -1,12 +1,12 @@
 import { Field, UInt64 } from 'o1js';
 
 /** INTERNAL IMPORTS */
-import { Fleet } from '../lib/models';
+import { AttackFleet } from '../lib/models';
 
 export namespace Consts {
   // empty values
   export const EMPTY_FIELD = Field(0);
-  export const EMPTY_FLEET = new Fleet({
+  export const EMPTY_ATTACK_FLEET = new AttackFleet({
     battleships: Field(0),
     destroyers: Field(0),
     carriers: Field(0),

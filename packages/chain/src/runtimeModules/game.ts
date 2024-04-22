@@ -8,12 +8,13 @@ import { State, StateMap, assert } from "@proto-kit/protocol";
 import { Field, Bool, PublicKey } from "o1js";
 
 /** INTERNAL IMPORTS  */
-import { Planet } from "../lib/models";
+import { Planet, AttackFleet} from "../lib/models";
 import { Consts } from "../lib/consts";
 import { Errors } from "../lib/errors";
 
 import { CreatePlanetProof } from "../proofs/createPlanetProof";
 import { DefendPlanetProof } from "../proofs/defendPlanetProof";
+import { UInt64 } from "@proto-kit/library";
 
 @runtimeModule()
 export class GameRuntime extends RuntimeModule<unknown> {
@@ -81,8 +82,8 @@ export class GameRuntime extends RuntimeModule<unknown> {
             faction: publicOutput.faction,
             defenseHash: Consts.EMPTY_FIELD,
             defenseStrength: Consts.EMPTY_FIELD,
-            incomingAttack: Consts.EMPTY_FLEET,
-            incomingAttackTime: Consts.EMPTY_FIELD,
+            incomingAttack: Consts.EMPTY_ATTACK_FLEET,
+            incomingAttackTime: UInt64.from(0),
             points: Consts.EMPTY_FIELD
         }));
 
@@ -135,18 +136,62 @@ export class GameRuntime extends RuntimeModule<unknown> {
     }
 
     @runtimeMethod()
-    public launchAttack() {
+    public launchAttack(
+        attackerHomeWorldId: Field, 
+        defendingPlanetId: Field, 
+        attackFleet: AttackFleet
+    ) {
+
         // STEP 1: verify that the defending planet exists
+        assert(
+            this.planetDetails.get(defendingPlanetId).isSome,
+            Errors.INVALID_KEY
+        );
+        const defenderDetails = this.planetDetails.get(defendingPlanetId).value;
 
-        // STEP 2: verify that the player has access to his homeworld
+        // STEP 2: verify that attacking homeworld exists
+        assert(
+            this.planetDetails.get(attackerHomeWorldId).isSome,
+            Errors.INVALID_KEY
+        );
+        const attackerDetails = this.planetDetails.get(attackerHomeWorldId).value;
 
-        // STEP 3: verify that the defending planet has defense
+        // STEP 3: verify that the attacker owns the attacking homeworld
+        const sender = this.transaction.sender.value;
+        assert(
+            attackerDetails.owner.equals(sender),
+            Errors.PLAYER_HAS_NO_ACCESS
+        );
 
-        // STEP 4: verify the defending planet is not under attack
+        // STEP 4: verify that the player is not attacking their own planet
+        assert(
+            defenderDetails.owner.equals(sender).not(),
+            Errors.CANNOT_ATTACK_OWN_PLANET
+        );
 
-        // STEP 5: verify the attack fleet strength
+        // STEP 5: verify that the defending planet has defense
+        assert(
+            defenderDetails.defenseStrength.equals(Consts.EMPTY_FIELD).not(),
+            Errors.PLANET_HAS_NO_DEFENSE
+        );
 
-        // STEP 6: update the state - set attack
+        // STEP 6: verify the defending planet is not under attack
+        assert(
+            defenderDetails.incomingAttackTime.equals(Consts.EMPTY_FIELD),
+            Errors.PLANET_UNDER_ATTACK
+        );
+
+        // STEP 7: verify the attack fleet strength
+        const attackStrength = attackFleet.strength();
+        attackStrength.assertLessThanOrEqual(
+            Consts.MAX_ATTACK_STRENGTH,
+            Errors.ATTACK_FLEET_STRENGH
+        );
+
+        // STEP 8: update the state - set attack
+        defenderDetails.incomingAttack = attackFleet;
+        defenderDetails.incomingAttackTime = this.network.block.height;
+        this.planetDetails.set(defendingPlanetId, defenderDetails);
     }
 
 

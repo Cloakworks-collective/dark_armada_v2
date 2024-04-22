@@ -1,3 +1,4 @@
+import { UInt64 } from '@proto-kit/library';
 import { Struct, Field, PublicKey } from 'o1js';
 
 export class PlanetaryDefense extends Struct({
@@ -11,7 +12,7 @@ export class PlanetaryDefense extends Struct({
   };
 };
 
-export class Fleet extends Struct({
+export class AttackFleet extends Struct({
     battleships: Field,
     destroyers: Field,
     carriers: Field
@@ -28,8 +29,8 @@ export class Planet extends Struct({
     faction: Field,
     defenseHash: Field,
     defenseStrength: Field,
-    incomingAttack: Fleet,
-    incomingAttackTime: Field,
+    incomingAttack: AttackFleet,
+    incomingAttackTime: UInt64,
     points: Field,
   }){};
 
