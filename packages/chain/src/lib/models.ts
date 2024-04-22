@@ -1,4 +1,4 @@
-import { Struct, Field, CircuitString } from 'o1js';
+import { Struct, Field, PublicKey } from 'o1js';
 
 export class PlanetaryDefense extends Struct({
   battleships: Field,
@@ -23,14 +23,14 @@ export class Fleet extends Struct({
   };  
 
 export class Planet extends Struct({
-    name: CircuitString,
-    facttion: Field,
+    owner: PublicKey,
+    locationHash: Field,
+    faction: Field,
     defenseHash: Field,
+    defenseStrength: Field,
     incomingAttack: Fleet,
     incomingAttackTime: Field,
     points: Field,
-    locationHash: Field,
-    owner: Field,
   }){};
 
 
@@ -39,7 +39,12 @@ export class Planet extends Struct({
   export class CreatePlanetPublicOutput extends Struct({
     locationHash: Field,
     faction: Field,
-  }) {}; 
+  }) {};
+
+  export class DefendPlanetPublicOutput extends Struct({
+    defenseHash: Field,
+    strength: Field,
+  }) {}
 
 
   

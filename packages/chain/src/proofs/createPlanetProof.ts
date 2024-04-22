@@ -1,9 +1,9 @@
 import { 
     Field, 
-    Poseidon, 
     Experimental
  } from 'o1js';
 
+/** UNTERNAL IMPORTS  */
 import { CreatePlanetPublicOutput } from "../lib/models";
 import { CreatePlanetUtils } from '../utils/createPlanet';
 
@@ -52,4 +52,4 @@ export function planetValidator(
   });
 
   export let CreatePlanetProof_ = Experimental.ZkProgram.Proof(createPlanetValidator);
-  export class CratePlanetProof extends CreatePlanetProof_ {}
+  export class CreatePlanetProof extends CreatePlanetProof_ {}

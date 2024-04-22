@@ -1,13 +1,16 @@
-import { Field, UInt64, MerkleMap, MerkleTree } from 'o1js';
+import { Field, UInt64 } from 'o1js';
 
-const emptyMerkleMap = new MerkleMap();
-const emptyMerkleTree12 = new MerkleTree(12);
+/** INTERNAL IMPORTS */
+import { Fleet } from '../lib/models';
 
 export namespace Consts {
   // empty values
-  export const EMPTY_MAP_ROOT = emptyMerkleMap.getRoot();
-  export const EMPTY_TREE_ROOT12 = emptyMerkleTree12.getRoot();
   export const EMPTY_FIELD = Field(0);
+  export const EMPTY_FLEET = new Fleet({
+    battleships: Field(0),
+    destroyers: Field(0),
+    carriers: Field(0),
+  })
 
   // filled values
   export const FILLED = Field(1);
