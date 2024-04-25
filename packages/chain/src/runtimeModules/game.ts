@@ -5,7 +5,7 @@ import {
     RuntimeModule 
 } from "@proto-kit/module";
 import { State, StateMap, assert } from "@proto-kit/protocol";
-import { Field, Bool, PublicKey } from "o1js";
+import { Field, Bool, PublicKey, Poseidon, Provable } from "o1js";
 
 /** INTERNAL IMPORTS  */
 import { Planet, AttackFleet} from "../lib/models";
@@ -14,6 +14,7 @@ import { Errors } from "../lib/errors";
 
 import { CreatePlanetProof } from "../proofs/createPlanetProof";
 import { DefendPlanetProof } from "../proofs/defendPlanetProof";
+import { BattleProof } from "../proofs/battleProof";
 import { UInt64 } from "@proto-kit/library";
 
 @runtimeModule()
@@ -141,6 +142,8 @@ export class GameRuntime extends RuntimeModule<unknown> {
         defendingPlanetId: Field, 
         attackFleet: AttackFleet
     ) {
+        // TODO: either make attack struct herr, or verify attackerHmeWorldId,
+        // is the same as the sender
 
         // STEP 1: verify that the defending planet exists
         assert(
@@ -176,10 +179,10 @@ export class GameRuntime extends RuntimeModule<unknown> {
         );
 
         // STEP 6: verify the defending planet is not under attack
-        assert(
-            defenderDetails.incomingAttackTime.equals(Consts.EMPTY_FIELD),
-            Errors.PLANET_UNDER_ATTACK
-        );
+        // assert(
+        //     defenderDetails.incomingAttackTime.equals(Consts.EMPTY_FIELD),
+        //     Errors.PLANET_UNDER_ATTACK
+        // );
 
         // STEP 7: verify the attack fleet strength
         const attackStrength = attackFleet.strength();
@@ -190,8 +193,80 @@ export class GameRuntime extends RuntimeModule<unknown> {
 
         // STEP 8: update the state - set attack
         defenderDetails.incomingAttack = attackFleet;
-        defenderDetails.incomingAttackTime = this.network.block.height;
+        // defenderDetails.incomingAttackTime = Field(this.network.block.height);
         this.planetDetails.set(defendingPlanetId, defenderDetails);
+    }
+
+    @runtimeMethod()
+    public resolveAttack(
+        defendingPlanetId: Field,
+        battleProof: BattleProof
+    ) {
+
+        // STEP 1: verify that the defending planet exists
+        assert(
+            this.planetDetails.get(defendingPlanetId).isSome,
+            Errors.INVALID_KEY
+        );
+
+        // STEP 2: verify the owner of the defending planet is the sender
+        const sender = this.transaction.sender.value;
+        const defenderDetails = this.planetDetails.get(defendingPlanetId).value;
+        assert(
+            defenderDetails.owner.equals(sender),
+            Errors.PLAYER_HAS_NO_ACCESS
+        );
+
+        // STEP 3: verify the proof (battle computation is valid)
+        battleProof.verify();
+
+        // STEP 4: verify that the defense hash was not tampered with
+        const publicOutput = battleProof.publicOutput;
+        const defenseHash = publicOutput.defenseHash;
+        assert(
+            defenderDetails.defenseHash.equals(defenseHash),
+            Errors.DEFENSE_DOES_NOT_MATCH
+        );
+
+
+        // STEP 5: verify that the attacking fleet was not tampered with
+        const attackInProof = publicOutput.attackingFleet;
+        const attackInProofHash = Poseidon.hash(AttackFleet.toFields(attackInProof));
+
+        const storedAttack = defenderDetails.incomingAttack;
+        const storedAttackHash = Poseidon.hash(AttackFleet.toFields(storedAttack));
+
+        assert(
+            attackInProofHash.equals(storedAttackHash),
+            Errors.ATTACK_DOES_NOT_MATCH
+        );
+
+
+        // STEP 6: update the states based on the battle result
+        const didDefenseWin = publicOutput.didDefenseWin;
+        const defenderpoints = defenderDetails.points;
+
+        const attackerHmeWorldId = attackInProof.attackerHomePlanet;
+        const attackerDetails = this.planetDetails.get(attackerHmeWorldId).value;
+        const attackerPoints = attackerDetails.points;
+
+        const updatedAttackerPoints = Provable.if(
+            didDefenseWin,
+            attackerPoints.sub(Consts.WIN_POINTS),
+            attackerPoints.add(Consts.LOSE_POINTS)
+          );
+
+        const updatedDefenderPoints = Provable.if(
+            didDefenseWin,
+            defenderpoints.add(Consts.WIN_POINTS),
+            defenderpoints.sub(Consts.LOSE_POINTS)
+        );
+
+        attackerDetails.points = updatedAttackerPoints;
+        defenderDetails.points = updatedDefenderPoints;
+
+        this.planetDetails.set(defendingPlanetId, defenderDetails);
+        this.planetDetails.set(attackerHmeWorldId, attackerDetails);
     }
 
 

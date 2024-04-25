@@ -3,40 +3,63 @@ import {
     Experimental
  } from 'o1js';
 
-/** UNTERNAL IMPORTS  */
-import { BattlePublicOutput } from "../lib/models";
+/** INTERNAL IMPORTS  */
+
+import { 
+    AttackFleet, 
+    BattlePublicOutput, 
+    PlanetaryDefense 
+} from "../lib/models";
+
 import { BattleUtils } from '../utils/battle';
+import { DefendPlanetUtils } from '../utils/defendPlanet';
 
 export function computeBattle(
-  x: Field, 
-  y: Field, 
-  faction: Field
+    attackingFleet: AttackFleet,
+    defense: PlanetaryDefense,
+    salt: Field,
 ): BattlePublicOutput {
 
+    const didDefenseWin = BattleUtils.computeWinner(
+        attackingFleet, 
+        defense
+    );
 
+    const defenseHash = DefendPlanetUtils.calculateDefenseHash(
+        defense, 
+        salt
+    );
 
     return new BattlePublicOutput({
-      locationHash,
-      faction
+        didDefenseWin, 
+        defenseHash,
+        attackingFleet
     });
   };
  
   /**
    * Battle Validator
    * 
-   * This program is used to validate the user inputs for creating a planet.
-   * publicOutput: CreatePlanetPublicOutput {locationHash, Faction }
+   * This program is use compute winner in a battle.
+   * publicOutput: BattlePublicOutput {DidDefenseWin, defense hash, attacking fleet}
    * 
-   * privateInputs; [x, y, faction]
+   * publicInputs: AttackFleet
+   * privateInputs; [defense, salt]
+   * 
+   * @note: the program returns the winner, and the defense hash
+   * and the attacking fleet. The defense hash and the attacking fleet
+   * output are then used in the runtime module to verify that those
+   * values were not tampered with.
    * 
    */
   export const battleValidator = Experimental.ZkProgram({
     key: 'battle-validator',
+    publicInput: AttackFleet,
     publicOutput: BattlePublicOutput,
 
     methods: {
       verifyUserInputs: {
-        privateInputs: [Field, Field, Field],
+        privateInputs: [PlanetaryDefense, Field],
         method: computeBattle,
       },
     },

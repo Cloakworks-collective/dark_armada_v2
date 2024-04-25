@@ -3,7 +3,6 @@ export namespace Errors {
     export const INVALID_KEY = 'Not the correct key';
     export const PLAYER_HAS_NO_ACCESS =
       'This player has no access to this planet';
-    export const INVALID_WITNESS = 'Invalid merkle witness sent to the contract';
   
     // create a new planet error messages
     export const COORDINATE_OUT_OF_RANGE = 'Coordinate out of range';

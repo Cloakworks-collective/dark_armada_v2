@@ -19,8 +19,8 @@ export function defenseValidator(
     const strength = defense.strength();
 
     return new DefendPlanetPublicOutput({
-      defenseHash,
-      strength
+        defenseHash, 
+        strength
     });
   };
  
@@ -32,6 +32,8 @@ export function defenseValidator(
    * 
    * privateInputs: [PlanetaryDefense, salt]
    * 
+   * @note: a salt is used to make the hash more secure
+   * if there is no salt, the hash could be brute forced
    */
   export const defendPlanetValidator = Experimental.ZkProgram({
     key: 'defend-planet-validator',

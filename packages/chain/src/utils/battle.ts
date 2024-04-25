@@ -8,7 +8,7 @@ import { Errors } from '../lib/errors';
 
 export class BattleUtils {
     
-    static computeDefense(
+    static computeWinner(
         attack: AttackFleet, 
         defense: PlanetaryDefense
     ): Bool {
