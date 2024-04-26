@@ -31,8 +31,6 @@ describe("create planet utils", () => {
     //     }
     // }
 
-
-
     it("should calculate the same location hash everytime", async () => {
         expect(locationHash).toEqual(
             CreatePlanetUtils.calculateLocationHash(
