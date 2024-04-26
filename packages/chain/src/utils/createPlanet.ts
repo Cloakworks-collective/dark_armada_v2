@@ -8,11 +8,11 @@ import { Errors } from '../lib/errors';
 export class CreatePlanetUtils {
     
   static calculateLocationHash(x: Field, y: Field): Field {
-    let locationHash = Poseidon.hash([x, y]);
-    for (let i = 0; i < Consts.CHAIN_HASH_TIMES; i++) {
-      locationHash = Poseidon.hash([locationHash, Field(i)]);
+    let currentHash = Poseidon.hash([x, y]);
+    for (let i = 1; i < Consts.CHAIN_HASH_TIMES; i++) {
+      currentHash = Poseidon.hash([currentHash, currentHash]);
     }
-    return locationHash;
+    return currentHash;
   }
 
   static verifyCoordinate(x: Field, y: Field) {
