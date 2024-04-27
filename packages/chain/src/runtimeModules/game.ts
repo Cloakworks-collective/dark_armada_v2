@@ -17,6 +17,13 @@ import { DefendPlanetProof } from "../proofs/defendPlanetProof";
 import { BattleProof } from "../proofs/battleProof";
 import { UInt64 } from "@proto-kit/library";
 
+export const EMPTY_ATTACK_FLEET = new AttackFleet({
+    attackerHomePlanet: Consts.EMPTY_FIELD,
+    battleships: Consts.EMPTY_FIELD,
+    destroyers: Consts.EMPTY_FIELD,
+    carriers: Consts.EMPTY_FIELD,
+  })
+
 @runtimeModule()
 export class GameRuntime extends RuntimeModule<unknown> {
 
@@ -77,7 +84,7 @@ export class GameRuntime extends RuntimeModule<unknown> {
             faction: publicOutput.faction,
             defenseHash: Consts.EMPTY_FIELD,
             defenseStrength: Consts.EMPTY_FIELD,
-            incomingAttack: Consts.EMPTY_ATTACK_FLEET,
+            incomingAttack: EMPTY_ATTACK_FLEET,
             incomingAttackTime: Consts.EMPTY_UINT64,
             points: Consts.EMPTY_FIELD
         }));

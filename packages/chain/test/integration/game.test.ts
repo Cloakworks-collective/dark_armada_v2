@@ -7,7 +7,7 @@ import { log } from "@proto-kit/common";
 import { UInt64 } from "@proto-kit/library";
 
 /** INTERNAL IMPORTS  */
-import { GameRuntime } from "../../src/runtimeModules/game";
+import { GameRuntime, EMPTY_ATTACK_FLEET } from "../../src/runtimeModules/game";
 import {  Planet, CreatePlanetPublicOutput } from "../../src/lib/models";
 import { Consts } from "../../src/lib/consts";
 import { Errors } from "../../src/lib/errors";
@@ -94,7 +94,7 @@ describe("game runtime", () => {
             expect(storedPlanetDetails?.locationHash).toMatchObject(validProof.publicOutput.locationHash);
             expect(storedPlanetDetails?.defenseHash).toMatchObject(Consts.EMPTY_FIELD);
             expect(storedPlanetDetails?.defenseStrength).toMatchObject(Consts.EMPTY_FIELD);
-            expect(storedPlanetDetails?.incomingAttack).toMatchObject(Consts.EMPTY_ATTACK_FLEET);
+            expect(storedPlanetDetails?.incomingAttack).toMatchObject(EMPTY_ATTACK_FLEET);
             // expect(storedPlanetDetails?.incomingAttackTime).toBe(Consts.EMPTY_UINT64);
             expect(storedPlanetDetails?.points).toMatchObject(Consts.EMPTY_FIELD);
 

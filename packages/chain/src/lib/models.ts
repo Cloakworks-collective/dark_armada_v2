@@ -1,14 +1,17 @@
 import { Struct, Field, PublicKey, Bool } from 'o1js';
 import { UInt64 } from '@proto-kit/library';
+import { Consts } from './consts';
 
 export class PlanetaryDefense extends Struct({
   battleships: Field,
   destroyers: Field,
   carriers: Field
 }){
-  strength(){
-    const fleetStrength = this.battleships.add(this.destroyers).add(this.carriers);
-    return fleetStrength;
+  totalCrewNeeded(){
+    const battleshipCrew = this.battleships.mul(Consts.BATTLESHIP_CREW);
+    const destroyerCrew = this.destroyers.mul(Consts.DESTROYER_CREW);
+    const carrierCrew = this.carriers.mul(Consts.CARRIER_CREW);
+    return battleshipCrew.add(destroyerCrew).add(carrierCrew);
   };
 };
 
@@ -45,7 +48,7 @@ export class Planet extends Struct({
 
   export class DefendPlanetPublicOutput extends Struct({
     defenseHash: Field,
-    strength: Field,
+    crewNeeded: Field,
   }) {}
 
   export class BattlePublicOutput extends Struct({

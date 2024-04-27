@@ -14,7 +14,7 @@ export namespace Errors {
     export const PLAYER_HAS_PLANET = 'Player already has a home planet';
   
     // set defense error messages
-    export const DEFENSE_STRENGTH = 'Planetary Defense strength too high';
+    export const DEFENSE_CREW = 'You do not have enough crew to man defense';
   
     // launch attack error messages
     export const PLANET_UNDER_ATTACK = 'Planet is already under attack';

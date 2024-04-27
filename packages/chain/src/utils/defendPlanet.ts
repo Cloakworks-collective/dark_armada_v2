@@ -12,11 +12,11 @@ export class DefendPlanetUtils {
         return Poseidon.hash(PlanetaryDefense.toFields(defense).concat([salt]));
     }
 
-    static verifyStrength(defense: PlanetaryDefense){
-        const strength = defense.strength();
-        strength.assertLessThanOrEqual(
-            Consts.MAX_DEFENSE_STRENGTH, 
-            Errors.DEFENSE_STRENGTH
+    static verifyCrew(defense: PlanetaryDefense){
+        const totalCrew = defense.totalCrewNeeded();
+        totalCrew.assertLessThanOrEqual(
+            Consts.MAX_DEFENSE_CREW, 
+            Errors.DEFENSE_CREW
         );
     }
 

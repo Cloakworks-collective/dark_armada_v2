@@ -2,17 +2,9 @@ import { Field } from 'o1js';
 import { UInt64 } from '@proto-kit/library';
 
 /** INTERNAL IMPORTS */
-import { AttackFleet } from '../lib/models';
-
 export namespace Consts {
   // empty values
-  export const EMPTY_FIELD = Field(0);
-  export const EMPTY_ATTACK_FLEET = new AttackFleet({
-    attackerHomePlanet: Field(0),
-    battleships: Field(0),
-    destroyers: Field(0),
-    carriers: Field(0),
-  })
+ export const EMPTY_FIELD = Field(0);
  export const EMPTY_UINT64 = UInt64.from(0); 
 
   // filled values
@@ -33,7 +25,14 @@ export namespace Consts {
   export const BATTLESHIP_STRENGTH = Field(4);
   export const DESTROYER_STRENGTH = Field(2);
   export const CARRIER_STRENGTH = Field(6);
-  export const MAX_DEFENSE_STRENGTH = Field(1000);
+
+  // crew values
+  export const BATTLESHIP_CREW = Field(100);
+  export const DESTROYER_CREW = Field(50);
+  export const CARRIER_CREW = Field(150);
+
+  // max strength values
+  export const MAX_DEFENSE_CREW = Field(100000); //100_000
   export const MAX_ATTACK_STRENGTH = Field(1000);
 
   // forfeit const
