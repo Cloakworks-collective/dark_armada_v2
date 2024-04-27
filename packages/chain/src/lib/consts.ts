@@ -1,4 +1,5 @@
-import { Field, UInt64 } from 'o1js';
+import { Field } from 'o1js';
+import { UInt64 } from '@proto-kit/library';
 
 /** INTERNAL IMPORTS */
 import { AttackFleet } from '../lib/models';
@@ -12,12 +13,12 @@ export namespace Consts {
     destroyers: Field(0),
     carriers: Field(0),
   })
+ export const EMPTY_UINT64 = UInt64.from(0); 
 
   // filled values
   export const FILLED = Field(1);
 
   // game constants
-  export const MAX_NUM_PLANETS = 1000;
   // @note: initiates 10000 x 10000 grid
   export const MAX_GAME_MAP_LENGTH = Field(10000); 
   // @note: normal poseidon hash is 77 characters long - Field(10**76),

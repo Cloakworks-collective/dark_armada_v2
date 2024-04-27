@@ -22,14 +22,14 @@ describe("create planet utils", () => {
         coords_in_range.y
     );
 
-    // for (let i = 0; i < 200; i++) {
-    //     for (let j = 0; j < 200; j++) {
-    //         const hash = CreatePlanetUtils.calculateLocationHash(Field(i), Field(j));
-    //         if (hash.lessThan(Consts.BIRTHING_DIFFICULTY_CUTOFF).toString() === "true") {
-    //             console.log("x: ", i, "y: ", j, "hash: ", hash.toString());
-    //         }
-    //     }
-    // }
+    for (let i = 0; i < 300; i++) {
+        for (let j = 0; j < 200; j++) {
+            const hash = CreatePlanetUtils.calculateLocationHash(Field(i), Field(j));
+            if (hash.lessThan(Consts.BIRTHING_DIFFICULTY_CUTOFF).toString() === "true") {
+                console.log("x: ", i, "y: ", j, "hash: ", hash.toString());
+            }
+        }
+    }
 
     it("should calculate the same location hash everytime", async () => {
         expect(locationHash).toEqual(

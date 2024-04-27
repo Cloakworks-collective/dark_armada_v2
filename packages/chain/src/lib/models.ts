@@ -1,5 +1,5 @@
-import { UInt64 } from '@proto-kit/library';
 import { Struct, Field, PublicKey, Bool } from 'o1js';
+import { UInt64 } from '@proto-kit/library';
 
 export class PlanetaryDefense extends Struct({
   battleships: Field,
