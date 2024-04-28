@@ -16,6 +16,8 @@ import {
     alice,
     bobPrivateKey,
     bob,
+    charliePrivateKey,
+    charlie,
     valid_coords,
     valid_faction,
     valid_defense,
@@ -28,7 +30,9 @@ import {
     createPlanetMockProof, 
     defendPlanetMockProof, 
     valid_coords2,
-    valid_faction2
+    valid_faction2,
+    valid_coords3,
+    valid_faction3
 } from "../testUtils";
 import { CreatePlanetUtils } from "../../src/utils/createPlanet";
 import exp from "constants";
@@ -252,6 +256,7 @@ describe("game runtime", () => {
     describe("attack planet runtime method", () => {
         let aliceLocationHash: Field;
         let bobLocationHash: Field;
+        let charlieLocationHash: Field;
 
         beforeAll(async () => {
             let tx: any
@@ -323,6 +328,24 @@ describe("game runtime", () => {
             await tx.sign();
             await tx.send();
             await appChain.produceBlock();
+
+            // Charlie creates a planet - but never defends it
+            const validCreatePlanetProofCharlie = await createPlanetMockProof(planetValidator(
+                valid_coords3.x,
+                valid_coords3.y,
+                valid_faction3
+            ));
+
+            appChain.setSigner(charliePrivateKey);
+            tx = await appChain.transaction(charlie, () => {
+                game.createPlanet(validCreatePlanetProofCharlie);
+            });
+
+            await tx.sign();
+            await tx.send();
+            await appChain.produceBlock();
+
+            charlieLocationHash = validCreatePlanetProofCharlie.publicOutput.locationHash;
         });
 
         it("validates that the defending planet exists", async () => {
@@ -366,11 +389,42 @@ describe("game runtime", () => {
         });
 
         it("validates that the attacker owns the attacking homeworld", async () => {
-            expect(1).toBe(1);
+            // Bob tries to attack Alice's planet, but sets charlie's location hash as his homeworld
+
+            appChain.setSigner(bobPrivateKey);
+            const tx = await appChain.transaction(bob, () => {
+                game.launchAttack(
+                    charlieLocationHash,
+                    aliceLocationHash,
+                    valid_attack_fleet
+                );
+            });
+
+            await tx.sign();
+            await tx.send();
+            const block = await appChain.produceBlock();
+
+            expect(block?.transactions[0].status.toBoolean()).toBe(false);
+            expect(block?.transactions[0].statusMessage).toBe(Errors.PLAYER_HAS_NO_ACCESS);
         });
 
         it("validates that the player is not attacking their own planet", async () => {
-            expect(1).toBe(1);
+            // Bob tries to attack his own planet
+            appChain.setSigner(bobPrivateKey);
+            const tx = await appChain.transaction(bob, () => {
+                game.launchAttack(
+                    bobLocationHash,
+                    bobLocationHash,
+                    valid_attack_fleet
+                );
+            });
+
+            await tx.sign();
+            await tx.send();
+            const block = await appChain.produceBlock();
+
+            expect(block?.transactions[0].status.toBoolean()).toBe(false);
+            expect(block?.transactions[0].statusMessage).toBe(Errors.CANNOT_ATTACK_OWN_PLANET);
         });
 
         it("validates attacking homeworld has a defense set", async () => {

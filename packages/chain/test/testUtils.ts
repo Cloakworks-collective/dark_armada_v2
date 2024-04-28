@@ -26,6 +26,8 @@ export const valid_coords = {x: Field(150), y: Field(28)};
 export const valid_faction = Consts.FACTION_C;
 export const valid_coords2 = {x: Field(213), y: Field(270)};
 export const valid_faction2 = Consts.FACTION_B;
+export const valid_coords3 = {x: Field(307), y: Field(343)};
+export const valid_faction3 = Consts.FACTION_A;
 
 /** MOCK DATA FOR TESTING PLANETARY DEFENSE */
 export const valid_defense = new PlanetaryDefense({
