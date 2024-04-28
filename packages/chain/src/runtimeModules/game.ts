@@ -188,10 +188,10 @@ export class GameRuntime extends RuntimeModule<unknown> {
 
         // STEP 8: verify the attack fleet strength
         const attackStrength = attackFleet.strength();
-        attackStrength.assertLessThanOrEqual(
-            Consts.MAX_ATTACK_STRENGTH,
+        assert(
+            Consts.MAX_ATTACK_STRENGTH.greaterThanOrEqual(attackStrength),
             Errors.ATTACK_FLEET_STRENGTH
-        );
+        )
 
         // STEP 9: verify the attacking fleet faction
         assert(

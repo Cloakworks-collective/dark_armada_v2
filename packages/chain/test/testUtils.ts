@@ -71,6 +71,13 @@ export const valid_charlie_attack_fleet = new AttackFleet({
   carriers: Field(250)
 });
 
+export const invalid_attack_fleet = new AttackFleet({
+    attackingFaction: valid_faction,
+    battleships: Field(50000),
+    destroyers: Field(30000),
+    carriers: Field(25000)
+});
+
 /** MOCK PROOFS */
  export async function createPlanetMockProof(
     publicOutput: CreatePlanetPublicOutput

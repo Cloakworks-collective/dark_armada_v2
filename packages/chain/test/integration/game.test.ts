@@ -26,6 +26,7 @@ import {
     valid_alice_attack_fleet,
     valid_bob_attack_fleet,
     valid_charlie_attack_fleet,
+    invalid_attack_fleet,
     invalid_locationhash,
     createPlanetMockProof, 
     defendPlanetMockProof, 
@@ -518,11 +519,70 @@ describe("game runtime", () => {
         });
 
         it("validates the strength of the attacking fleet", async () => {
-            expect(1).toBe(1);
+            // Alice tries to attack Bob's planet with a fleet strength greater than the max allowed
+            appChain.setSigner(alicePrivateKey);
+
+            const tx = await appChain.transaction(alice, () => {
+                game.launchAttack(
+                    aliceLocationHash,
+                    bobLocationHash,
+                    invalid_attack_fleet
+                );
+            });
+
+            await tx.sign();
+            await tx.send();
+            const block = await appChain.produceBlock();
+
+            expect(block?.transactions[0].status.toBoolean()).toBe(false);
+            expect(block?.transactions[0].statusMessage).toBe(Errors.ATTACK_FLEET_STRENGTH);
+        });
+
+
+        it("validates the attacking fleet faction", async () => {
+            // Alice tries to attack Bob's planet with a fleet of a different faction
+            appChain.setSigner(alicePrivateKey);
+
+            const tx = await appChain.transaction(alice, () => {
+                game.launchAttack(
+                    aliceLocationHash,
+                    bobLocationHash,
+                    valid_charlie_attack_fleet
+                );
+            });
+
+            await tx.sign();
+            await tx.send();
+            const block = await appChain.produceBlock();
+
+            expect(block?.transactions[0].status.toBoolean()).toBe(false);
+            expect(block?.transactions[0].statusMessage).toBe(Errors.INVALID_ATTACK_FACTION);
         });
 
         it("stores an incoming valid attack", async () => {
-            expect(1).toBe(1);
+            // Bob attacks Alice's planet
+            appChain.setSigner(bobPrivateKey);
+            const tx = await appChain.transaction(bob, () => {
+                game.launchAttack(
+                    bobLocationHash,
+                    aliceLocationHash,
+                    valid_bob_attack_fleet
+                );
+            });
+
+            await tx.sign();
+            await tx.send();
+            const block = await appChain.produceBlock();
+
+            expect(block?.transactions[0].status.toBoolean()).toBe(true);
+
+            const storedPlanetDetails = await appChain.query.runtime.GameRuntime.planetDetails.get(aliceLocationHash);
+
+            console.log("Alice got attacked AT", storedPlanetDetails?.incomingAttackTime.toString());
+
+            // check that the incoming attack is stored correctly
+            expect(storedPlanetDetails?.incomingAttack).toMatchObject(valid_bob_attack_fleet);
+
         });
 
     });
