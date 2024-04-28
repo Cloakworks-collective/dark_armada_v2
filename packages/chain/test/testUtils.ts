@@ -50,25 +50,25 @@ export const salt = Field(69);
 
 export const invalid_locationhash = Field(999999921345);
 
-export const valid_attack_fleet = new AttackFleet({
-    attackingFaction: Field(2),
+export const valid_alice_attack_fleet = new AttackFleet({
+    attackingFaction: valid_faction,
     battleships: Field(500),
     destroyers: Field(300),
     carriers: Field(250)
 });
 
-export const invalid_attack_fleet_valid_faction = new AttackFleet({
-    attackingFaction: Field(150),
-    battleships: Field(50000),
-    destroyers: Field(3000),
-    carriers: Field(2500)
+export const valid_bob_attack_fleet = new AttackFleet({
+  attackingFaction: valid_faction2,
+  battleships: Field(500),
+  destroyers: Field(300),
+  carriers: Field(250)
 });
 
-export const valid_attack_fleet_invalid_faction = new AttackFleet({
-  attackingFaction: Field(150),
-  battleships: Field(5),
-  destroyers: Field(5),
-  carriers: Field(5)
+export const valid_charlie_attack_fleet = new AttackFleet({
+  attackingFaction: valid_faction3,
+  battleships: Field(500),
+  destroyers: Field(300),
+  carriers: Field(250)
 });
 
 /** MOCK PROOFS */

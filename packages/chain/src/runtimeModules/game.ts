@@ -171,13 +171,13 @@ export class GameRuntime extends RuntimeModule<unknown> {
         // STEP 5: verify that the attacking homeworld has a defense set
           assert(
             attackerDetails.defenseManpower.greaterThan(Consts.EMPTY_FIELD),
-            Errors.PLANET_HAS_NO_DEFENSE
+            Errors.ATTACKER_HAS_NO_DEFENSE
         );
 
         // STEP 6: verify that the defending planet has defense
         assert(
             defenderDetails.defenseManpower.greaterThan(Consts.EMPTY_FIELD),
-            Errors.PLANET_HAS_NO_DEFENSE
+            Errors.DEFENDER_HAS_NO_DEFENSE
         );
 
         // STEP 7: verify the defending planet is not under attack already

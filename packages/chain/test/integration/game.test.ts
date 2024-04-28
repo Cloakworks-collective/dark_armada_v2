@@ -23,9 +23,9 @@ import {
     valid_defense,
     invalid_defense,
     salt,
-    valid_attack_fleet,
-    invalid_attack_fleet_valid_faction,
-    valid_attack_fleet_invalid_faction,
+    valid_alice_attack_fleet,
+    valid_bob_attack_fleet,
+    valid_charlie_attack_fleet,
     invalid_locationhash,
     createPlanetMockProof, 
     defendPlanetMockProof, 
@@ -355,7 +355,7 @@ describe("game runtime", () => {
                 game.launchAttack(
                     bobLocationHash,
                     invalid_locationhash,
-                    valid_attack_fleet
+                    valid_bob_attack_fleet
                     
                 );
             });
@@ -375,8 +375,7 @@ describe("game runtime", () => {
                 game.launchAttack(
                     invalid_locationhash,
                     aliceLocationHash,
-                    valid_attack_fleet
-                    
+                    valid_bob_attack_fleet
                 );
             });
 
@@ -396,7 +395,7 @@ describe("game runtime", () => {
                 game.launchAttack(
                     charlieLocationHash,
                     aliceLocationHash,
-                    valid_attack_fleet
+                    valid_charlie_attack_fleet
                 );
             });
 
@@ -415,7 +414,7 @@ describe("game runtime", () => {
                 game.launchAttack(
                     bobLocationHash,
                     bobLocationHash,
-                    valid_attack_fleet
+                    valid_bob_attack_fleet
                 );
             });
 
@@ -428,15 +427,94 @@ describe("game runtime", () => {
         });
 
         it("validates attacking homeworld has a defense set", async () => {
-            expect(1).toBe(1);
+            // Charlie tries to attack Alice's planet - but he never defended his own planet
+            appChain.setSigner(charliePrivateKey);
+            const tx = await appChain.transaction(charlie, () => {
+                game.launchAttack(
+                    charlieLocationHash,
+                    aliceLocationHash,
+                    valid_charlie_attack_fleet
+                );
+            });
+
+            await tx.sign();
+            await tx.send();
+            const block = await appChain.produceBlock();
+
+            expect(block?.transactions[0].status.toBoolean()).toBe(false);
+            expect(block?.transactions[0].statusMessage).toBe(Errors.ATTACKER_HAS_NO_DEFENSE);
         });
 
         it("validates defending homeworld has a defense set", async () => {
-            expect(1).toBe(1);
+            // Bob tries to attack Charlie's planet - but Charlie never defended his planet
+            appChain.setSigner(bobPrivateKey);
+            const tx = await appChain.transaction(bob, () => {
+                game.launchAttack(
+                    bobLocationHash,
+                    charlieLocationHash,
+                    valid_bob_attack_fleet
+                );
+            });
+
+            await tx.sign();
+            await tx.send();
+            const block = await appChain.produceBlock();
+
+            expect(block?.transactions[0].status.toBoolean()).toBe(false);
+            expect(block?.transactions[0].statusMessage).toBe(Errors.DEFENDER_HAS_NO_DEFENSE);
         });
 
         it("validates defending homeworld is not under attack already", async () => {
-            expect(1).toBe(1);
+            // charlie defends his planet
+            const validDefenseProofCharlie = await defendPlanetMockProof(defenseValidator(
+                valid_defense,
+                salt
+            ));
+
+            appChain.setSigner(charliePrivateKey);
+            const tx = await appChain.transaction(charlie, () => {
+                game.defendPlanet(
+                    charlieLocationHash,
+                    validDefenseProofCharlie
+                );
+            });
+
+            await tx.sign();
+            await tx.send();
+            await appChain.produceBlock();
+
+            // Alice attacks Charlie's planet
+            appChain.setSigner(alicePrivateKey);
+            const tx2 = await appChain.transaction(alice, () => {
+                game.launchAttack(
+                    aliceLocationHash,
+                    charlieLocationHash,
+                    valid_alice_attack_fleet
+                );
+            });
+
+            await tx2.sign();
+            await tx2.send();
+            const block = await appChain.produceBlock();
+
+            expect(block?.transactions[0].status.toBoolean()).toBe(true);
+
+            // Bob tries to attack Charlie's planet - but it is already under attack from Alice
+            appChain.setSigner(bobPrivateKey);
+            const tx3 = await appChain.transaction(bob, () => {
+                game.launchAttack(
+                    bobLocationHash,
+                    charlieLocationHash,
+                    valid_bob_attack_fleet
+                );
+            });
+
+            await tx3.sign();
+            await tx3.send();
+            const block2 = await appChain.produceBlock();
+
+            expect(block2?.transactions[0].status.toBoolean()).toBe(false);
+            expect(block2?.transactions[0].statusMessage).toBe(Errors.PLANET_UNDER_ATTACK);
         });
 
         it("validates the strength of the attacking fleet", async () => {
