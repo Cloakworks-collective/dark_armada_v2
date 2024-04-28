@@ -6,7 +6,7 @@ import { UInt64 } from "@proto-kit/library";
 
 /** INTERNAL IMPORTS  */
 import { GameRuntime, EMPTY_ATTACK_FLEET } from "../../src/runtimeModules/game";
-import { PlanetaryDefense } from "../../src/lib/models";
+import { Planet, PlanetaryDefense } from "../../src/lib/models";
 import { Consts } from "../../src/lib/consts";
 import { Errors } from "../../src/lib/errors";
 import { CreatePlanetProof, planetValidator } from "../../src/proofs/createPlanetProof";
@@ -70,13 +70,12 @@ describe("game runtime", () => {
             const numberOfPlanets = await appChain.query.runtime.GameRuntime.numberOfPlanets.get();
             const storedPlanetDetails = await appChain.query.runtime.
                 GameRuntime.planetDetails.
-                get(validProof.publicOutput.locationHash);
+                get(validProof.publicOutput.locationHash)
 
             expect(block?.transactions[0].status.toBoolean()).toBe(true);
 
             // check that the number of planets has increased by one
             expect(numberOfPlanets).toMatchObject(Field(1));
-
 
             // check that the planet details are stored correctly
             expect(storedPlanetDetails?.faction).toMatchObject(valid_faction);
@@ -85,7 +84,7 @@ describe("game runtime", () => {
             expect(storedPlanetDetails?.defenseHash).toMatchObject(Consts.EMPTY_FIELD);
             expect(storedPlanetDetails?.defenseManpower).toMatchObject(Consts.EMPTY_FIELD);
             expect(storedPlanetDetails?.incomingAttack).toMatchObject(EMPTY_ATTACK_FLEET);
-            // expect(storedPlanetDetails?.incomingAttackTime).toBe(Consts.EMPTY_UINT64);
+            expect(storedPlanetDetails?.incomingAttackTime).toEqual(Consts.EMPTY_FIELD);
             expect(storedPlanetDetails?.points).toMatchObject(Consts.EMPTY_FIELD);
 
             // check the nullifiers
