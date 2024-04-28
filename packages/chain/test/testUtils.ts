@@ -1,13 +1,15 @@
-import { Field, Bool, Poseidon, PrivateKey } from "o1js";
+import { Field, PrivateKey, PublicKey } from "o1js";
 import { dummyBase64Proof } from "o1js/dist/node/lib/proof_system";
 import { Pickles } from "o1js/dist/node/snarky";
 import { Consts } from "../src/lib/consts";
+import { AppChain, TestingAppChain } from "@proto-kit/sdk";
 
 
 /** INTERNAL IMPORTS  */
 import { AttackFleet, CreatePlanetPublicOutput, DefendPlanetPublicOutput, PlanetaryDefense } from "../src/lib/models";
 import { CreatePlanetProof } from "../src/proofs/createPlanetProof";
 import { DefendPlanetProof } from "../src/proofs/defendPlanetProof";
+import { Coordinates } from "../src/lib/models";
 
 /** MOCK PLAYERS */
 export const alicePrivateKey = PrivateKey.random();

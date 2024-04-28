@@ -56,5 +56,10 @@ export class Planet extends Struct({
     attackingFleet: AttackFleet,
   }) {};
 
+  /** Commonly used Interfaces */
+  export interface Coordinates {
+    x: Field;
+    y: Field;
+  }
 
   

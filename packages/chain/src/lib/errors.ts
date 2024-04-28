@@ -30,6 +30,8 @@ export namespace Errors {
     // resolve attack error messages
     export const ATTACK_DOES_NOT_MATCH = 'Attack does not match';
     export const DEFENSE_DOES_NOT_MATCH = 'Defense does not match';
+    export const NO_DEFENDING_PLANET_FOUND = 'No defending planet found';
+    export const NO_ATTACKER_HOMEWORLD = 'No attacker homeworld found';
   
     // forfeit error messages
     export const NOT_ATTACKER = 'Only the attacker can claim the forfeit';

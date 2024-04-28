@@ -144,14 +144,14 @@ export class GameRuntime extends RuntimeModule<unknown> {
         // STEP 1: verify that the defending planet exists
         assert(
             this.planetDetails.get(defendingPlanet).isSome,
-            Errors.INVALID_KEY
+            Errors.NO_DEFENDING_PLANET_FOUND
         );
         const defenderDetails = new Planet(this.planetDetails.get(defendingPlanet).value);
 
         // STEP 2: verify that attacking homeworld exists
         assert(
             this.planetDetails.get(attackerHomeworld).isSome,
-            Errors.INVALID_KEY
+            Errors.NO_ATTACKER_HOMEWORLD
         );
         const attackerDetails = new Planet(this.planetDetails.get(attackerHomeworld).value);
 

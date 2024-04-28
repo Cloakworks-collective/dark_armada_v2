@@ -26,7 +26,9 @@ import {
     valid_attack_fleet_invalid_faction,
     invalid_locationhash,
     createPlanetMockProof, 
-    defendPlanetMockProof 
+    defendPlanetMockProof, 
+    valid_coords2,
+    valid_faction2
 } from "../testUtils";
 import { CreatePlanetUtils } from "../../src/utils/createPlanet";
 import exp from "constants";
@@ -248,6 +250,8 @@ describe("game runtime", () => {
     });
 
     describe("attack planet runtime method", () => {
+        let aliceLocationHash: Field;
+        let bobLocationHash: Field;
 
         beforeAll(async () => {
             let tx: any
@@ -273,7 +277,7 @@ describe("game runtime", () => {
                 valid_defense,
                 salt
             ));
-            const aliceLocationHash = validCreatePlanetProof.publicOutput.locationHash;
+            aliceLocationHash = validCreatePlanetProof.publicOutput.locationHash;
 
             tx = await appChain.transaction(alice, () => {
                 game.defendPlanet(
@@ -285,24 +289,80 @@ describe("game runtime", () => {
             await tx.sign();
             await tx.send();
             await appChain.produceBlock();
-        })
+
+            // Bob creates a planet
+            const validCreatePlanetProofBob = await createPlanetMockProof(planetValidator(
+                valid_coords2.x,
+                valid_coords2.y,
+                valid_faction2
+            ));
+
+            appChain.setSigner(bobPrivateKey);
+            tx = await appChain.transaction(bob, () => {
+                game.createPlanet(validCreatePlanetProofBob);
+            });
+
+            await tx.sign();
+            await tx.send();
+            await appChain.produceBlock();
+
+            // Bob defends his planet
+            const validDefenseProofBob = await defendPlanetMockProof(defenseValidator(
+                valid_defense,
+                salt
+            ));
+            bobLocationHash = validCreatePlanetProofBob.publicOutput.locationHash;
+
+            tx = await appChain.transaction(bob, () => {
+                game.defendPlanet(
+                    bobLocationHash,
+                    validDefenseProofBob
+                );
+            });
+
+            await tx.sign();
+            await tx.send();
+            await appChain.produceBlock();
+        });
 
         it("validates that the defending planet exists", async () => {
-            // Bob tries to attack a planet that does not exist
-            // appChain.setSigner(bobPrivateKey);
-            // const tx = await appChain.transaction(bob, () => {
-            //     game.launchAttack(
-            //         invalid_locationhash,
-            //         valid_coords,
-            //         valid_attack_fleet
+            //Bob tries to attack a planet that does not exist
+            appChain.setSigner(bobPrivateKey);
+            const tx = await appChain.transaction(bob, () => {
+                game.launchAttack(
+                    bobLocationHash,
+                    invalid_locationhash,
+                    valid_attack_fleet
                     
-            //     );
-            // });
-            expect(1).toBe(1);
+                );
+            });
+
+            await tx.sign();
+            await tx.send();
+            const block = await appChain.produceBlock();
+
+            expect(block?.transactions[0].status.toBoolean()).toBe(false);
+            expect(block?.transactions[0].statusMessage).toBe(Errors.NO_DEFENDING_PLANET_FOUND);
         });
 
         it("validates that the attacking homeworld exists", async () => {
-            expect(1).toBe(1);
+            //Bob tries to attack alice's planet but gives wrong location hash for his homeworld
+            appChain.setSigner(bobPrivateKey);
+            const tx = await appChain.transaction(bob, () => {
+                game.launchAttack(
+                    invalid_locationhash,
+                    aliceLocationHash,
+                    valid_attack_fleet
+                    
+                );
+            });
+
+            await tx.sign();
+            await tx.send();
+            const block = await appChain.produceBlock();
+
+            expect(block?.transactions[0].status.toBoolean()).toBe(false);
+            expect(block?.transactions[0].statusMessage).toBe(Errors.NO_ATTACKER_HOMEWORLD);
         });
 
         it("validates that the attacker owns the attacking homeworld", async () => {

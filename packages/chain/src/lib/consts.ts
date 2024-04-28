@@ -33,7 +33,7 @@ export namespace Consts {
 
   // max strength values
   export const MAX_DEFENSE_CREW = Field(100000); //100_000
-  export const MAX_ATTACK_STRENGTH = Field(1000);
+  export const MAX_ATTACK_STRENGTH = Field(5000);
 
   // forfeit const
   // @note: 24 hours in milliseconds
