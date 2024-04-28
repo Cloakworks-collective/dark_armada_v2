@@ -14,6 +14,7 @@ export namespace Errors {
     export const PLAYER_HAS_PLANET = 'Player already has a home planet';
   
     // set defense error messages
+    export const PLANET_DOES_NOT_EXIST_HERE = 'Planet does not exist here';
     export const DEFENSE_CREW = 'You do not have enough crew to man defense';
   
     // launch attack error messages

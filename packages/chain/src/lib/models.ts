@@ -32,7 +32,7 @@ export class Planet extends Struct({
     locationHash: Field,
     faction: Field,
     defenseHash: Field,
-    defenseStrength: Field,
+    defenseManpower: Field,
     incomingAttack: AttackFleet,
     incomingAttackTime: UInt64,
     points: Field,

@@ -83,7 +83,7 @@ export class GameRuntime extends RuntimeModule<unknown> {
             locationHash: locationHash,
             faction: publicOutput.faction,
             defenseHash: Consts.EMPTY_FIELD,
-            defenseStrength: Consts.EMPTY_FIELD,
+            defenseManpower: Consts.EMPTY_FIELD,
             incomingAttack: EMPTY_ATTACK_FLEET,
             incomingAttackTime: Consts.EMPTY_UINT64,
             points: Consts.EMPTY_FIELD
@@ -93,28 +93,28 @@ export class GameRuntime extends RuntimeModule<unknown> {
         this.locationNullifier.set(locationHash, Bool(true));
     }
 
-    // @runtimeMethod()
-    // public defendPlanet(
-    //     locationHash: Field, 
-    //     defenseProof: DefendPlanetProof
-    // ) {
+    @runtimeMethod()
+    public defendPlanet(
+        locationHash: Field, 
+        defenseProof: DefendPlanetProof
+    ) {
 
-    //     const publicOutput = defenseProof.publicOutput;
-    //     const sender = this.transaction.sender.value;
-    //     const planetId = locationHash;
+        const publicOutput = defenseProof.publicOutput;
+        const sender = this.transaction.sender.value;
+        const planetId = locationHash;
 
-    //     // STEP 1: verify that the plent exists 
-    //     assert(
-    //         this.planetDetails.get(planetId).isSome,
-    //         Errors.INVALID_KEY
-    //     );
+        // STEP 1: verify that the planet exists 
+        assert(
+            this.planetDetails.get(planetId).isSome,
+            Errors.PLANET_DOES_NOT_EXIST_HERE
+        );
 
-    //     // STET 2: verify that the player has access to the planet
-    //     const details = this.planetDetails.get(planetId).value
-    //     assert(
-    //         details.owner.equals(sender),
-    //         Errors.PLAYER_HAS_NO_ACCESS
-    //     );
+        // STET 2: verify that the player has access to the planet
+        const details = this.planetDetails.get(planetId).value
+        assert(
+            details.owner.equals(sender),
+            Errors.PLAYER_HAS_NO_ACCESS
+        );
 
 
     //     // STEP 3: verify that the planet is not under attack 
@@ -124,18 +124,15 @@ export class GameRuntime extends RuntimeModule<unknown> {
     //         Errors.PLANET_UNDER_ATTACK
     //     );
 
-    //     // STEP 4: verify the proof (defense is valid)
-    //     defenseProof.verify();
+        // STEP 4: verify the proof (defense is valid)
+        defenseProof.verify();
 
-    //     // STEP 5: update the state - set defense
-    //     const defenseHash = publicOutput.defenseHash;
-    //     const defenseStrength = publicOutput.strength;
+        // STEP 5: update the state - set defense
+        details.defenseHash = publicOutput.defenseHash;
+        details.defenseManpower = publicOutput.crewNeeded;
 
-    //     details.defenseHash = defenseHash;
-    //     details.defenseStrength = defenseStrength;
-
-    //     this.planetDetails.set(planetId, details);
-    // }
+        this.planetDetails.set(planetId, details);
+    }
 
     // @runtimeMethod()
     // public launchAttack(
