@@ -18,7 +18,7 @@ import { BattleProof } from "../proofs/battleProof";
 import { UInt64 } from "@proto-kit/library";
 
 export const EMPTY_ATTACK_FLEET = new AttackFleet({
-    attackerHomePlanet: Consts.EMPTY_FIELD,
+    attackingFaction: Consts.EMPTY_FIELD,
     battleships: Consts.EMPTY_FIELD,
     destroyers: Consts.EMPTY_FIELD,
     carriers: Consts.EMPTY_FIELD,
@@ -168,26 +168,38 @@ export class GameRuntime extends RuntimeModule<unknown> {
             Errors.CANNOT_ATTACK_OWN_PLANET
         );
 
-        // STEP 5: verify that the defending planet has defense
+        // STEP 5: verify that the attacking homeworld has a defense set
+          assert(
+            attackerDetails.defenseManpower.greaterThan(Consts.EMPTY_FIELD),
+            Errors.PLANET_HAS_NO_DEFENSE
+        );
+
+        // STEP 6: verify that the defending planet has defense
         assert(
             defenderDetails.defenseManpower.greaterThan(Consts.EMPTY_FIELD),
             Errors.PLANET_HAS_NO_DEFENSE
         );
 
-        // STEP 6: verify the defending planet is not under attack already
+        // STEP 7: verify the defending planet is not under attack already
         assert(
             defenderDetails.incomingAttackTime.equals(Consts.EMPTY_FIELD),
             Errors.PLANET_UNDER_ATTACK
         );
 
-        // STEP 7: verify the attack fleet strength
+        // STEP 8: verify the attack fleet strength
         const attackStrength = attackFleet.strength();
         attackStrength.assertLessThanOrEqual(
             Consts.MAX_ATTACK_STRENGTH,
             Errors.ATTACK_FLEET_STRENGTH
         );
 
-        // STEP 8: update the state - set attack
+        // STEP 9: verify the attacking fleet faction
+        assert(
+            attackFleet.attackingFaction.equals(attackerDetails.faction),
+            Errors.INVALID_ATTACK_FACTION
+        );
+
+        // STEP 10: update the state - set attack
         const attackTime = this.network.block.height.value;
 
         defenderDetails.incomingAttack = attackFleet

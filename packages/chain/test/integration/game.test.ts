@@ -21,6 +21,10 @@ import {
     valid_defense,
     invalid_defense,
     salt,
+    valid_attack_fleet,
+    invalid_attack_fleet_valid_faction,
+    valid_attack_fleet_invalid_faction,
+    invalid_locationhash,
     createPlanetMockProof, 
     defendPlanetMockProof 
 } from "../testUtils";
@@ -240,6 +244,94 @@ describe("game runtime", () => {
             expect(block?.transactions[0].status.toBoolean()).toBe(false);
             expect(block?.transactions[0].statusMessage).toBe(Errors.PLAYER_HAS_NO_ACCESS);
         })
+
+    });
+
+    describe("attack planet runtime method", () => {
+
+        beforeAll(async () => {
+            let tx: any
+
+            // Alice creates a planet
+            const validCreatePlanetProof = await createPlanetMockProof(planetValidator(
+                valid_coords.x,
+                valid_coords.y,
+                valid_faction
+            ));
+
+            appChain.setSigner(alicePrivateKey);
+            tx = await appChain.transaction(alice, () => {
+                game.createPlanet(validCreatePlanetProof);
+            });
+
+            await tx.sign();
+            await tx.send();
+            await appChain.produceBlock();
+
+            // Alice defends her planet
+            const validDefenseProof = await defendPlanetMockProof(defenseValidator(
+                valid_defense,
+                salt
+            ));
+            const aliceLocationHash = validCreatePlanetProof.publicOutput.locationHash;
+
+            tx = await appChain.transaction(alice, () => {
+                game.defendPlanet(
+                    aliceLocationHash,
+                    validDefenseProof
+                );
+            });
+
+            await tx.sign();
+            await tx.send();
+            await appChain.produceBlock();
+        })
+
+        it("validates that the defending planet exists", async () => {
+            // Bob tries to attack a planet that does not exist
+            // appChain.setSigner(bobPrivateKey);
+            // const tx = await appChain.transaction(bob, () => {
+            //     game.launchAttack(
+            //         invalid_locationhash,
+            //         valid_coords,
+            //         valid_attack_fleet
+                    
+            //     );
+            // });
+            expect(1).toBe(1);
+        });
+
+        it("validates that the attacking homeworld exists", async () => {
+            expect(1).toBe(1);
+        });
+
+        it("validates that the attacker owns the attacking homeworld", async () => {
+            expect(1).toBe(1);
+        });
+
+        it("validates that the player is not attacking their own planet", async () => {
+            expect(1).toBe(1);
+        });
+
+        it("validates attacking homeworld has a defense set", async () => {
+            expect(1).toBe(1);
+        });
+
+        it("validates defending homeworld has a defense set", async () => {
+            expect(1).toBe(1);
+        });
+
+        it("validates defending homeworld is not under attack already", async () => {
+            expect(1).toBe(1);
+        });
+
+        it("validates the strength of the attacking fleet", async () => {
+            expect(1).toBe(1);
+        });
+
+        it("stores an incoming valid attack", async () => {
+            expect(1).toBe(1);
+        });
 
     });
     

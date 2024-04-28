@@ -25,6 +25,7 @@ export namespace Errors {
     export const CANNOT_ATTACK_OWN_PLANET =
       'Player cannot attack their own planet';
     export const INVALID_ATTACKER_DETAILS = 'Invalid attacker details';
+    export const INVALID_ATTACK_FACTION = 'Attacking fleet faction does not match with the attacking planet faction';
   
     // resolve attack error messages
     export const ATTACK_DOES_NOT_MATCH = 'Attack does not match';

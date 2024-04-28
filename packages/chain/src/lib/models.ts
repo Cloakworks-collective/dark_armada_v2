@@ -15,7 +15,7 @@ export class PlanetaryDefense extends Struct({
 };
 
 export class AttackFleet extends Struct({
-    attackerHomePlanet: Field,
+    attackingFaction: Field,
     battleships: Field,
     destroyers: Field,
     carriers: Field
