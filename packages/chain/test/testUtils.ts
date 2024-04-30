@@ -29,16 +29,20 @@ export const valid_faction2 = Consts.FACTION_B;
 export const valid_coords3 = {x: Field(307), y: Field(343)};
 export const valid_faction3 = Consts.FACTION_A;
 
+export const valid_defense_hash = Field(3334729777580927688747490806230569009184039221907836141353265208667850978072n); 
+
 /** MOCK DATA FOR TESTING PLANETARY DEFENSE */
 export const valid_defense = new PlanetaryDefense({
-    battleships: Field(400), 
-    destroyers: Field(300), 
-    carriers: Field(225) 
+    battleships: Field(40), 
+    destroyers: Field(20), 
+    carriers: Field(10),
+    odps: Field(100)
 });
 export const invalid_defense = new PlanetaryDefense({
     battleships: Field(500),
     destroyers: Field(300),
-    carriers: Field(250)
+    carriers: Field(250),
+    odps: Field(100)
 });
 export const salt = Field(69);
 

@@ -51,7 +51,6 @@ export class GameRuntime extends RuntimeModule<unknown> {
     );
 
     /** RUNTIME METHODS */
-
     @runtimeMethod()
     public createPlanet(creationProof: CreatePlanetProof) {
 
@@ -208,58 +207,58 @@ export class GameRuntime extends RuntimeModule<unknown> {
         this.planetDetails.set(defendingPlanet, defenderDetails);
     }
 
-    // @runtimeMethod()
-    // public resolveAttack(
-    //     defendingPlanetId: Field,
-    //     battleProof: BattleProof
-    // ) {
+    @runtimeMethod()
+    public resolveAttack(
+        defendingPlanetId: Field,
+        battleProof: BattleProof
+    ) {
 
-    //     // STEP 1: verify that the defending planet exists
-    //     assert(
-    //         this.planetDetails.get(defendingPlanetId).isSome,
-    //         Errors.INVALID_KEY
-    //     );
+        // STEP 1: verify that the defending planet exists
+        assert(
+            this.planetDetails.get(defendingPlanetId).isSome,
+            Errors.INVALID_KEY
+        );
 
-    //     // STEP 2: verify the owner of the defending planet is the sender
-    //     const sender = this.transaction.sender.value;
-    //     const defenderDetails = this.planetDetails.get(defendingPlanetId).value;
-    //     assert(
-    //         defenderDetails.owner.equals(sender),
-    //         Errors.PLAYER_HAS_NO_ACCESS
-    //     );
+        // STEP 2: verify the owner of the defending planet is the sender
+        const sender = this.transaction.sender.value;
+        const defenderDetails = this.planetDetails.get(defendingPlanetId).value;
+        assert(
+            defenderDetails.owner.equals(sender),
+            Errors.PLAYER_HAS_NO_ACCESS
+        );
 
-    //     // STEP 3: verify the proof (battle computation is valid)
-    //     battleProof.verify();
+        // STEP 3: verify the proof (battle computation is valid)
+        battleProof.verify();
 
-    //     // STEP 4: verify that the defense hash was not tampered with
-    //     const publicOutput = battleProof.publicOutput;
-    //     const defenseHash = publicOutput.defenseHash;
-    //     assert(
-    //         defenderDetails.defenseHash.equals(defenseHash),
-    //         Errors.DEFENSE_DOES_NOT_MATCH
-    //     );
-
-
-    //     // STEP 5: verify that the attacking fleet was not tampered with
-    //     const attackInProof = publicOutput.attackingFleet;
-    //     const attackInProofHash = Poseidon.hash(AttackFleet.toFields(attackInProof));
-
-    //     const storedAttack = defenderDetails.incomingAttack;
-    //     const storedAttackHash = Poseidon.hash(AttackFleet.toFields(storedAttack));
-
-    //     assert(
-    //         attackInProofHash.equals(storedAttackHash),
-    //         Errors.ATTACK_DOES_NOT_MATCH
-    //     );
+        // STEP 4: verify that the defense hash was not tampered with
+        const publicOutput = battleProof.publicOutput;
+        const defenseHash = publicOutput.defenseHash;
+        assert(
+            defenderDetails.defenseHash.equals(defenseHash),
+            Errors.DEFENSE_DOES_NOT_MATCH
+        );
 
 
-    //     // STEP 6: update the states based on the battle result
-    //     const didDefenseWin = publicOutput.didDefenseWin;
-    //     const defenderpoints = defenderDetails.points;
+        // STEP 5: verify that the attacking fleet was not tampered with
+        const attackInProof = publicOutput.attackingFleet;
+        const attackInProofHash = Poseidon.hash(AttackFleet.toFields(attackInProof));
 
-    //     const attackerHmeWorldId = attackInProof.attackerHomePlanet;
-    //     const attackerDetails = this.planetDetails.get(attackerHmeWorldId).value;
-    //     const attackerPoints = attackerDetails.points;
+        const storedAttack = defenderDetails.incomingAttack;
+        const storedAttackHash = Poseidon.hash(AttackFleet.toFields(storedAttack));
+
+        assert(
+            attackInProofHash.equals(storedAttackHash),
+            Errors.ATTACK_DOES_NOT_MATCH
+        );
+
+
+        // // STEP 6: update the states based on the battle result
+        // const didDefenseWin = publicOutput.didDefenseWin;
+        // const defenderpoints = defenderDetails.points;
+
+        // const attackerLocationHash = attackInProof.attackerHomePlanet;
+        // const attackerDetails = this.planetDetails.get(attackerHmeWorldId).value;
+        // const attackerPoints = attackerDetails.points;
 
     //     const updatedAttackerPoints = Provable.if(
     //         didDefenseWin,
@@ -278,7 +277,7 @@ export class GameRuntime extends RuntimeModule<unknown> {
 
     //     this.planetDetails.set(defendingPlanetId, defenderDetails);
     //     this.planetDetails.set(attackerHmeWorldId, attackerDetails);
-    // }
+    }
 
 
 }

@@ -4,13 +4,16 @@ import { Consts } from './consts';
 export class PlanetaryDefense extends Struct({
   battleships: Field,
   destroyers: Field,
-  carriers: Field
+  carriers: Field,
+  odps: Field
 }){
-  totalCrewNeeded(){
-    const battleshipCrew = this.battleships.mul(Consts.BATTLESHIP_CREW);
-    const destroyerCrew = this.destroyers.mul(Consts.DESTROYER_CREW);
-    const carrierCrew = this.carriers.mul(Consts.CARRIER_CREW);
-    return battleshipCrew.add(destroyerCrew).add(carrierCrew);
+  totalCost(){
+    const battleshipCost = this.battleships.mul(Consts.BATTLESHIP_COST);
+    const destroyerCost = this.destroyers.mul(Consts.DESTROYER_COST);
+    const carrierCost = this.carriers.mul(Consts.CARRIER_COST);
+    const odpsCost = this.odps.mul(Consts.ODP_COST);
+    const totalCost = battleshipCost.add(destroyerCost).add(carrierCost).add(odpsCost);
+    return totalCost;
   };
 };
 

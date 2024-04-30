@@ -197,7 +197,7 @@ describe("game runtime", () => {
 
             // check that the defense hash is stored correctly
             expect(storedPlanetDetails?.defenseHash).toMatchObject(validDefenseProof.publicOutput.defenseHash);
-            expect(storedPlanetDetails?.defenseManpower).toMatchObject(valid_defense.totalCrewNeeded());
+            expect(storedPlanetDetails?.defenseManpower).toMatchObject(valid_defense.totalCost());
         });
 
         it("validates that the planet exists", async () => {

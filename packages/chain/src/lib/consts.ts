@@ -21,20 +21,6 @@ export namespace Consts {
   export const LOSE_POINTS = Field(1);
   export const FORFEIT_POINTS = Field(2);
 
-  // fleet values
-  export const BATTLESHIP_STRENGTH = Field(4);
-  export const DESTROYER_STRENGTH = Field(2);
-  export const CARRIER_STRENGTH = Field(6);
-
-  // crew values
-  export const BATTLESHIP_CREW = Field(100);
-  export const DESTROYER_CREW = Field(50);
-  export const CARRIER_CREW = Field(150);
-
-  // max strength values
-  export const MAX_DEFENSE_CREW = Field(100000); //100_000
-  export const MAX_ATTACK_STRENGTH = Field(5000);
-
   // forfeit const
   // @note: 24 hours in milliseconds
   export const FORFEIT_CLAIM_DURATION = UInt64.from(86400000); 
@@ -43,4 +29,23 @@ export namespace Consts {
   export const FACTION_A = Field(1);
   export const FACTION_B = Field(2);
   export const FACTION_C = Field(3);
+
+  /** UNIT CONSTANTS */
+
+  // fleet values
+  export const BATTLESHIP_STRENGTH = Field(4);
+  export const DESTROYER_STRENGTH = Field(2);
+  export const CARRIER_STRENGTH = Field(6);
+
+  // unit costs
+  export const DESTROYER_COST = Field(10000);
+  export const BATTLESHIP_COST = Field(50000);
+  export const CARRIER_COST = Field(500000);
+  export const ODP_COST = Field(20000);
+  export const TROOP_TRANSPORT = Field(40000);
+
+  // max strength values
+  export const MAX_DEFENSE_COST = Field(10000000); //10_000_000
+  export const MAX_ATTACK_STRENGTH = Field(5000);
+
 }

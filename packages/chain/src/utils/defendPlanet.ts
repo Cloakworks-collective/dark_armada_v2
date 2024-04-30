@@ -13,9 +13,9 @@ export class DefendPlanetUtils {
     }
 
     static verifyCrew(defense: PlanetaryDefense){
-        const totalCrew = defense.totalCrewNeeded();
+        const totalCrew = defense.totalCost();
         totalCrew.assertLessThanOrEqual(
-            Consts.MAX_DEFENSE_CREW, 
+            Consts.MAX_DEFENSE_COST, 
             Errors.DEFENSE_CREW
         );
     }

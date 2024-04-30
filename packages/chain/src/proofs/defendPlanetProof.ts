@@ -16,7 +16,7 @@ export function defenseValidator(
     DefendPlanetUtils.verifyCrew(defense);
 
     const defenseHash = DefendPlanetUtils.calculateDefenseHash(defense, salt);
-    const crewNeeded = defense.totalCrewNeeded();
+    const crewNeeded = defense.totalCost();
 
     return new DefendPlanetPublicOutput({
         defenseHash, 

@@ -6,26 +6,12 @@ import { DefendPlanetPublicOutput } from "../../src/lib/models";
 import { defenseValidator } from "../../src/proofs/defendPlanetProof";
 import { DefendPlanetUtils } from '../../src/utils/defendPlanet';
 import { PlanetaryDefense } from "../../src/lib/models";
-import { Consts } from "../../src/lib/consts";
 import { Errors } from "../../src/lib/errors";
+import { valid_defense, invalid_defense, salt } from "../testUtils";
 
 log.setLevel("ERROR");
 
 describe("defend planet proof", () => {
-
-    const valid_defense = new PlanetaryDefense({
-        battleships: Field(400), 
-        destroyers: Field(300), 
-        carriers: Field(225) 
-    });
-
-    const invalid_defense = new PlanetaryDefense({
-        battleships: Field(500),
-        destroyers: Field(300),
-        carriers: Field(250)
-    });
-
-    const salt = Field(69);
 
     it("validates crew requirements for valid planetary defense", async () => {
         expect(defenseValidator(
@@ -34,7 +20,7 @@ describe("defend planet proof", () => {
         )).toEqual(
             new DefendPlanetPublicOutput({
                 defenseHash: DefendPlanetUtils.calculateDefenseHash(valid_defense, salt),
-                crewNeeded: valid_defense.totalCrewNeeded()
+                crewNeeded: valid_defense.totalCost()
             })
         );
     });
