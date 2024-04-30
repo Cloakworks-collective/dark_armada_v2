@@ -22,6 +22,7 @@ export const EMPTY_ATTACK_FLEET = new AttackFleet({
     battleships: Consts.EMPTY_FIELD,
     destroyers: Consts.EMPTY_FIELD,
     carriers: Consts.EMPTY_FIELD,
+    troopTransports: Consts.EMPTY_FIELD
   })
 
 
@@ -185,10 +186,10 @@ export class GameRuntime extends RuntimeModule<unknown> {
             Errors.PLANET_UNDER_ATTACK
         );
 
-        // STEP 8: verify the attack fleet strength
-        const attackStrength = attackFleet.strength();
+        // STEP 8: verify the attack fleet attack cost
+        const cost_to_attack = attackFleet.attackCost();
         assert(
-            Consts.MAX_ATTACK_STRENGTH.greaterThanOrEqual(attackStrength),
+            Consts.MAX_ATTACK_COST.greaterThanOrEqual(cost_to_attack),
             Errors.ATTACK_FLEET_STRENGTH
         )
 

@@ -2,14 +2,14 @@ import { Field, PrivateKey, PublicKey } from "o1js";
 import { dummyBase64Proof } from "o1js/dist/node/lib/proof_system";
 import { Pickles } from "o1js/dist/node/snarky";
 import { Consts } from "../src/lib/consts";
-import { AppChain, TestingAppChain } from "@proto-kit/sdk";
+
 
 
 /** INTERNAL IMPORTS  */
 import { AttackFleet, CreatePlanetPublicOutput, DefendPlanetPublicOutput, PlanetaryDefense } from "../src/lib/models";
 import { CreatePlanetProof } from "../src/proofs/createPlanetProof";
 import { DefendPlanetProof } from "../src/proofs/defendPlanetProof";
-import { Coordinates } from "../src/lib/models";
+
 
 /** MOCK PLAYERS */
 export const alicePrivateKey = PrivateKey.random();
@@ -56,30 +56,34 @@ export const invalid_locationhash = Field(999999921345);
 
 export const valid_alice_attack_fleet = new AttackFleet({
     attackingFaction: valid_faction,
-    battleships: Field(500),
-    destroyers: Field(300),
-    carriers: Field(250)
+    battleships: Field(40),
+    destroyers: Field(20),
+    carriers: Field(10),
+    troopTransports: Field(50)
 });
 
 export const valid_bob_attack_fleet = new AttackFleet({
   attackingFaction: valid_faction2,
-  battleships: Field(500),
-  destroyers: Field(300),
-  carriers: Field(250)
+  battleships: Field(20),
+  destroyers: Field(50),
+  carriers: Field(10),
+  troopTransports: Field(50)
 });
 
 export const valid_charlie_attack_fleet = new AttackFleet({
   attackingFaction: valid_faction3,
-  battleships: Field(500),
-  destroyers: Field(300),
-  carriers: Field(250)
+  battleships: Field(10),
+  destroyers: Field(50),
+  carriers: Field(10),
+  troopTransports: Field(50)
 });
 
 export const invalid_attack_fleet = new AttackFleet({
     attackingFaction: valid_faction,
     battleships: Field(50000),
     destroyers: Field(30000),
-    carriers: Field(25000)
+    carriers: Field(25000),
+    troopTransports: Field(10000)
 });
 
 /** MOCK PROOFS */

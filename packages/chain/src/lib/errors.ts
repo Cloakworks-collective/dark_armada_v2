@@ -21,7 +21,7 @@ export namespace Errors {
     export const PLANET_UNDER_ATTACK = 'Planet is already under attack';
     export const ATTACKER_HAS_NO_DEFENSE = 'Attacking home planet has no defense';
     export const DEFENDER_HAS_NO_DEFENSE = 'Defending planet has no planetary defense';
-    export const ATTACK_FLEET_STRENGTH = 'Attack Fleet strength too high';
+    export const ATTACK_FLEET_STRENGTH = 'Attack Fleet cost too high';
     export const CANNOT_ATTACK_OWN_PLANET =
       'Player cannot attack their own planet';
     export const INVALID_ATTACKER_DETAILS = 'Invalid attacker details';

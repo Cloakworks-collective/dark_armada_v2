@@ -21,11 +21,16 @@ export class AttackFleet extends Struct({
     attackingFaction: Field,
     battleships: Field,
     destroyers: Field,
-    carriers: Field
+    carriers: Field,
+    troopTransports: Field,
   }){
-    strength(){
-      const fleetStrength = this.battleships.add(this.destroyers).add(this.carriers);
-      return fleetStrength;
+    attackCost(){
+      const battleshipCost = this.battleships.mul(Consts.BATTLESHIP_COST);
+      const destroyerCost = this.destroyers.mul(Consts.DESTROYER_COST);
+      const carrierCost = this.carriers.mul(Consts.CARRIER_COST);
+      const troopTransportCost = this.troopTransports.mul(Consts.TROOP_TRANSPORT);
+      const totalCost = battleshipCost.add(destroyerCost).add(carrierCost).add(troopTransportCost);
+      return totalCost;
     };
   };  
 

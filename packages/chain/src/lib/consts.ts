@@ -46,6 +46,6 @@ export namespace Consts {
 
   // max strength values
   export const MAX_DEFENSE_COST = Field(10000000); //10_000_000
-  export const MAX_ATTACK_STRENGTH = Field(5000);
+  export const MAX_ATTACK_COST = Field(10000000); //10_000_000
 
 }
