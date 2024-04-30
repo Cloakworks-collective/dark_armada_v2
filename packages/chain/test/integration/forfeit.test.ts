@@ -241,18 +241,6 @@ describe("game runtime", () => {
 
             it("validates that the attacker is calling", async () => {
                 // Alice tries to call forfeit on Charlie's planet, which is under attack by Bob
-
-                const storedCharlieDetails = await appChain.query.runtime.GameRuntime.planetDetails.get(charlieLocationHash);
-                const attack = storedCharlieDetails?.incomingAttack;
-                const attackerHomePlanet = attack!.attackerHash;
-                const attackerDetails = await appChain.query.runtime.GameRuntime.planetDetails.get(attackerHomePlanet);
-                const attacker = attackerDetails?.owner;
-
-                console.log("attacker", attacker?.toBase58());
-                console.log("bob", bob.toBase58());
-                console.log("alice", alice.toBase58());
-                console.log("charlie", charlie.toBase58());
-
                 appChain.setSigner(alicePrivateKey);
 
                 const tx = await appChain.transaction(alice, () => {
@@ -324,5 +312,4 @@ describe("game runtime", () => {
             });
     });
     
-
 });
