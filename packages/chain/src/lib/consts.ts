@@ -23,8 +23,9 @@ export namespace Consts {
   export const FORFEIT_POINTS = Field(2);
 
   // forfeit const
-  // @note: 24 hours in milliseconds
-  export const FORFEIT_CLAIM_DURATION = UInt64.from(86400000); 
+  // @note: assuming each block is 10 seconds
+  // 24 hours - 8640 blocks (10 seconds per block)
+  export const FORFEIT_BLOCKS_DURATION = 8640 
 
   // factions const
   export const FACTION_A = Field(1);

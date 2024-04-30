@@ -34,6 +34,7 @@ export namespace Errors {
     export const NO_ATTACKER_HOMEWORLD = 'No attacker homeworld found';
   
     // forfeit error messages
+    export const PLANET_NOT_UNDER_ATTACK = 'Planet is not under attack';
     export const NOT_ATTACKER = 'Only the attacker can claim the forfeit';
     export const FORFEIT_CLAIM_DURATION =
       'Forfeit can not be claimed before claim duration passed';

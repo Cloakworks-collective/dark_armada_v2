@@ -282,5 +282,49 @@ export class GameRuntime extends RuntimeModule<unknown> {
         this.planetDetails.set(attackerLocationHash, attackerDetails);
     }
 
+    @runtimeMethod()
+    public forfeitPlanet(locationHash: Field) {
+
+        // STEP 1: verify that the planet exists
+        assert(
+            this.planetDetails.get(locationHash).isSome,
+            Errors.NO_DEFENDING_PLANET_FOUND
+        );
+
+        // STEP 2: verify that the planet is under attack
+        const defenderDetails = this.planetDetails.get(locationHash).value;
+        assert(
+            defenderDetails.incomingAttackTime.equals(Consts.EMPTY_FIELD).not(),
+            Errors.PLANET_NOT_UNDER_ATTACK
+        );
+
+        // STEP 3: verify that the sender is the attacker
+        const sender = this.transaction.sender.value;
+        const attackerLocationHash = defenderDetails.incomingAttack.attackerHash;
+        const attackerDetails = this.planetDetails.get(attackerLocationHash).value;
+
+        assert(
+            attackerDetails.owner.equals(sender),
+            Errors.NOT_ATTACKER
+        );
+
+        // STEP 4: verify that the forfeit claim duration has passed
+        const attackTime = defenderDetails.incomingAttackTime;
+        const currentTime = this.network.block.height.value;
+
+        const timeDiff = currentTime.sub(attackTime);
+        assert(
+            timeDiff.greaterThanOrEqual(Consts.FORFEIT_BLOCKS_DURATION),
+            Errors.FORFEIT_CLAIM_DURATION
+        );
+
+        // STEP 5: update the states based on the forfeit
+        const updatedAttackerPoints = attackerDetails.points.add(Field(1));
+        const updatedDefenderPoints = defenderDetails.points.sub(Field(2));
+
+        // reset the incoming attack
+        defenderDetails.incomingAttack = EMPTY_ATTACK_FLEET;
+        defenderDetails.incomingAttackTime = Consts.EMPTY_FIELD;
+    }
 
 }
