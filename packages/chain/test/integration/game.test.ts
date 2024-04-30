@@ -538,27 +538,6 @@ describe("game runtime", () => {
             expect(block?.transactions[0].statusMessage).toBe(Errors.ATTACK_FLEET_COST);
         });
 
-
-        it("validates the attacking fleet faction", async () => {
-            // Alice tries to attack Bob's planet with a fleet of a different faction
-            appChain.setSigner(alicePrivateKey);
-
-            const tx = await appChain.transaction(alice, () => {
-                game.launchAttack(
-                    aliceLocationHash,
-                    bobLocationHash,
-                    valid_charlie_attack_fleet
-                );
-            });
-
-            await tx.sign();
-            await tx.send();
-            const block = await appChain.produceBlock();
-
-            expect(block?.transactions[0].status.toBoolean()).toBe(false);
-            expect(block?.transactions[0].statusMessage).toBe(Errors.INVALID_ATTACK_FACTION);
-        });
-
         it("stores an incoming valid attack", async () => {
             // Bob attacks Alice's planet
             appChain.setSigner(bobPrivateKey);
@@ -577,12 +556,18 @@ describe("game runtime", () => {
             expect(block?.transactions[0].status.toBoolean()).toBe(true);
 
             const storedPlanetDetails = await appChain.query.runtime.GameRuntime.planetDetails.get(aliceLocationHash);
+            const networkState = await appChain.query.network.unproven;
+            const currentBlockHeight = networkState!.block.height
 
-            console.log("Alice got attacked AT", storedPlanetDetails?.incomingAttackTime.toString());
 
             // check that the incoming attack is stored correctly
             expect(storedPlanetDetails?.incomingAttack).toMatchObject(valid_bob_attack_fleet);
 
+            // check that the incoming attack time is stored correctly
+            expect(storedPlanetDetails?.incomingAttackTime).toMatchObject(currentBlockHeight.value);
+
+            // check that the attacker location hash is stored correctly
+            expect(storedPlanetDetails?.incomingAttack.attackerHash).toMatchObject(bobLocationHash);
         });
 
     });

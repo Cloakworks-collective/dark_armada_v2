@@ -9,6 +9,7 @@ import { Consts } from "../src/lib/consts";
 import { AttackFleet, CreatePlanetPublicOutput, DefendPlanetPublicOutput, PlanetaryDefense } from "../src/lib/models";
 import { CreatePlanetProof } from "../src/proofs/createPlanetProof";
 import { DefendPlanetProof } from "../src/proofs/defendPlanetProof";
+import { CreatePlanetUtils } from "../src/utils/createPlanet";
 
 
 /** MOCK PLAYERS */
@@ -54,8 +55,13 @@ export const salt = Field(69);
 
 export const invalid_locationhash = Field(999999921345);
 
+export const valid_alice_hash = CreatePlanetUtils.calculateLocationHash(valid_coords.x, valid_coords.y);
+export const valid_bob_hash = CreatePlanetUtils.calculateLocationHash(valid_coords2.x, valid_coords2.y);
+export const valid_charlie_hash = CreatePlanetUtils.calculateLocationHash(valid_coords3.x, valid_coords3.y);
+
+
 export const valid_alice_attack_fleet = new AttackFleet({
-    attackingFaction: valid_faction,
+    attackerHash: valid_alice_hash,
     battleships: Field(40),
     destroyers: Field(20),
     carriers: Field(10),
@@ -63,7 +69,7 @@ export const valid_alice_attack_fleet = new AttackFleet({
 });
 
 export const valid_bob_attack_fleet = new AttackFleet({
-  attackingFaction: valid_faction2,
+  attackerHash: valid_bob_hash,
   battleships: Field(20),
   destroyers: Field(50),
   carriers: Field(10),
@@ -71,7 +77,7 @@ export const valid_bob_attack_fleet = new AttackFleet({
 });
 
 export const valid_charlie_attack_fleet = new AttackFleet({
-  attackingFaction: valid_faction3,
+  attackerHash: valid_charlie_hash,
   battleships: Field(10),
   destroyers: Field(50),
   carriers: Field(10),
@@ -79,7 +85,7 @@ export const valid_charlie_attack_fleet = new AttackFleet({
 });
 
 export const invalid_attack_fleet = new AttackFleet({
-    attackingFaction: valid_faction,
+    attackerHash: valid_alice_hash,
     battleships: Field(50000),
     destroyers: Field(30000),
     carriers: Field(25000),

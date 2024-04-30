@@ -18,7 +18,7 @@ import { BattleProof } from "../proofs/battleProof";
 import { UInt64 } from "@proto-kit/library";
 
 export const EMPTY_ATTACK_FLEET = new AttackFleet({
-    attackingFaction: Consts.EMPTY_FIELD,
+    attackerHash: Consts.EMPTY_FIELD,
     battleships: Consts.EMPTY_FIELD,
     destroyers: Consts.EMPTY_FIELD,
     carriers: Consts.EMPTY_FIELD,
@@ -193,14 +193,10 @@ export class GameRuntime extends RuntimeModule<unknown> {
             Errors.ATTACK_FLEET_COST
         )
 
-        // STEP 9: verify the attacking fleet faction
-        assert(
-            attackFleet.attackingFaction.equals(attackerDetails.faction),
-            Errors.INVALID_ATTACK_FACTION
-        );
-
-        // STEP 10: update the state - set attack
+        // STEP 9: update the state - set attack
         const attackTime = this.network.block.height.value;
+
+        attackFleet.attackerHash = attackerHomeworld;
 
         defenderDetails.incomingAttack = attackFleet
         defenderDetails.incomingAttackTime = attackTime;
