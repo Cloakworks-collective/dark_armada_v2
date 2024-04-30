@@ -1,4 +1,4 @@
-# Protokit starter-kit
+# Dark Armada Protokit Repo - based on the Protokitstarter-kit
 
 This repository is a monorepo aimed at kickstarting application chain development using the Protokit framework.
 
@@ -32,22 +32,18 @@ nvm use
 pnpm install
 ```
 
-### Running the sequencer & UI
-
-```zsh
-# starts both UI and sequencer locally
-pnpm dev
-
-# starts UI only
-pnpm dev -- --filter web
-# starts sequencer only
-pnpm dev -- --filter chain
-```
-
 ### Running tests
 ```zsh
-# run and watch tests for the `chain` package
-pnpm run test --filter=chain -- --watchAll
+cd packages/chain
+npm test -- --verbose
 ```
 
-Navigate to `localhost:3000` to see the example UI, or to `localhost:8080/graphql` to see the GQL interface of the locally running sequencer.
+The test results: 
+![alt text](images/test1.png)
+
+There are both Unit and Integration Tests that can be found in the `test` folder of `packages/chain`
+
+![alt text](images/testFolder.png)
+
+The test coverage was worked on
+
