@@ -535,7 +535,7 @@ describe("game runtime", () => {
             const block = await appChain.produceBlock();
 
             expect(block?.transactions[0].status.toBoolean()).toBe(false);
-            expect(block?.transactions[0].statusMessage).toBe(Errors.ATTACK_FLEET_STRENGTH);
+            expect(block?.transactions[0].statusMessage).toBe(Errors.ATTACK_FLEET_COST);
         });
 
 

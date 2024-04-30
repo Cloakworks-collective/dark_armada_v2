@@ -16,7 +16,7 @@ export class DefendPlanetUtils {
         const totalCrew = defense.totalCost();
         totalCrew.assertLessThanOrEqual(
             Consts.MAX_DEFENSE_COST, 
-            Errors.DEFENSE_CREW
+            Errors.PLANETARY_DEFENSE_COST
         );
     }
 

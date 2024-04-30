@@ -190,7 +190,7 @@ export class GameRuntime extends RuntimeModule<unknown> {
         const cost_to_attack = attackFleet.attackCost();
         assert(
             Consts.MAX_ATTACK_COST.greaterThanOrEqual(cost_to_attack),
-            Errors.ATTACK_FLEET_STRENGTH
+            Errors.ATTACK_FLEET_COST
         )
 
         // STEP 9: verify the attacking fleet faction

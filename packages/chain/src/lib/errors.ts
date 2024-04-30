@@ -15,13 +15,13 @@ export namespace Errors {
   
     // set defense error messages
     export const PLANET_DOES_NOT_EXIST_HERE = 'Planet does not exist here';
-    export const DEFENSE_CREW = 'You do not have enough crew to man defense';
+    export const PLANETARY_DEFENSE_COST = 'You do not have enough budget to set defense';
   
     // launch attack error messages
     export const PLANET_UNDER_ATTACK = 'Planet is already under attack';
     export const ATTACKER_HAS_NO_DEFENSE = 'Attacking home planet has no defense';
     export const DEFENDER_HAS_NO_DEFENSE = 'Defending planet has no planetary defense';
-    export const ATTACK_FLEET_STRENGTH = 'Attack Fleet cost too high';
+    export const ATTACK_FLEET_COST = 'Attack Fleet cost too high';
     export const CANNOT_ATTACK_OWN_PLANET =
       'Player cannot attack their own planet';
     export const INVALID_ATTACKER_DETAILS = 'Invalid attacker details';

@@ -29,7 +29,7 @@ describe("defend planet utils", () => {
     it("should throw an error if crew needed to man defense is too high", async () => {
         expect(() => {
             DefendPlanetUtils.verifyCrew(invalid_defense);
-        }).toThrow(Errors.DEFENSE_CREW);
+        }).toThrow(Errors.PLANETARY_DEFENSE_COST);
     });
 
 });

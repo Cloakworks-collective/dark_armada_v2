@@ -31,7 +31,7 @@ describe("defend planet proof", () => {
                 invalid_defense,
                 salt
             );
-        }).toThrow(Errors.DEFENSE_CREW);
+        }).toThrow(Errors.PLANETARY_DEFENSE_COST);
     });
     
 });
