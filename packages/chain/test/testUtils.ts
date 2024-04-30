@@ -6,9 +6,16 @@ import { Consts } from "../src/lib/consts";
 
 
 /** INTERNAL IMPORTS  */
-import { AttackFleet, CreatePlanetPublicOutput, DefendPlanetPublicOutput, PlanetaryDefense } from "../src/lib/models";
+import { 
+  AttackFleet, 
+  CreatePlanetPublicOutput, 
+  DefendPlanetPublicOutput,
+  BattlePublicOutput,
+  PlanetaryDefense 
+} from "../src/lib/models";
 import { CreatePlanetProof } from "../src/proofs/createPlanetProof";
 import { DefendPlanetProof } from "../src/proofs/defendPlanetProof";
+import { BattleProof } from "../src/proofs/battleProof";
 import { CreatePlanetUtils } from "../src/utils/createPlanet";
 
 
@@ -117,4 +124,18 @@ export async function defendPlanetMockProof(
       publicInput: undefined,
       publicOutput: publicOutput,
     });
+}
+
+export async function computeBattleMockProof(
+  publicOutput: BattlePublicOutput,
+  publicInput: AttackFleet
+): Promise<BattleProof> {
+  const [, proof] = Pickles.proofOfBase64(await dummyBase64Proof(), 2);
+
+  return new BattleProof({
+    proof: proof,
+    maxProofsVerified: 2,
+    publicInput: publicInput,
+    publicOutput: publicOutput,
+  });
 }

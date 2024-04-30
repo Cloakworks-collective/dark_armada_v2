@@ -8,7 +8,7 @@ import { Errors } from '../lib/errors';
 
 export class BattleUtils {
     
-    static computeWinner(
+    static computeSimpleWinner(
         attack: AttackFleet, 
         defense: PlanetaryDefense
     ): Bool {
@@ -41,10 +41,10 @@ export class BattleUtils {
         .add(carriersBeatsBattleships);
 
         const defended = Provable.if(
-        battleResult.greaterThanOrEqual(Field(0)),
+        battleResult.greaterThanOrEqual(Field(1)),
             Bool(true),
             Bool(false)
-            );
+        );
 
         return defended;
     }

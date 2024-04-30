@@ -20,7 +20,7 @@ export function computeBattle(
     salt: Field,
 ): BattlePublicOutput {
 
-    const didDefenseWin = BattleUtils.computeWinner(
+    const didDefenseWin = BattleUtils.computeSimpleWinner(
         attackingFleet, 
         defense
     );

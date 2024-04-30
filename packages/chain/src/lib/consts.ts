@@ -9,6 +9,7 @@ export namespace Consts {
 
   // filled values
   export const FILLED = Field(1);
+  export const INITIAL_POINTS = Field(1000);
 
   // game constants
   // @note: initiates 10000 x 10000 grid

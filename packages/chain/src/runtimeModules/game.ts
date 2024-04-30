@@ -16,6 +16,7 @@ import { CreatePlanetProof } from "../proofs/createPlanetProof";
 import { DefendPlanetProof } from "../proofs/defendPlanetProof";
 import { BattleProof } from "../proofs/battleProof";
 import { UInt64 } from "@proto-kit/library";
+import { log } from "console";
 
 export const EMPTY_ATTACK_FLEET = new AttackFleet({
     attackerHash: Consts.EMPTY_FIELD,
@@ -87,7 +88,7 @@ export class GameRuntime extends RuntimeModule<unknown> {
             defenseManpower: Consts.EMPTY_FIELD,
             incomingAttack: EMPTY_ATTACK_FLEET,
             incomingAttackTime: Consts.EMPTY_FIELD,
-            points: Consts.EMPTY_FIELD
+            points: Consts.INITIAL_POINTS
         }));
 
         this.playerNullifier.set(sender, Bool(true));
@@ -206,19 +207,19 @@ export class GameRuntime extends RuntimeModule<unknown> {
 
     @runtimeMethod()
     public resolveAttack(
-        defendingPlanetId: Field,
+        defenderLocationHash: Field,
         battleProof: BattleProof
     ) {
 
         // STEP 1: verify that the defending planet exists
         assert(
-            this.planetDetails.get(defendingPlanetId).isSome,
-            Errors.INVALID_KEY
+            this.planetDetails.get(defenderLocationHash).isSome,
+            Errors.NO_DEFENDING_PLANET_FOUND
         );
 
         // STEP 2: verify the owner of the defending planet is the sender
         const sender = this.transaction.sender.value;
-        const defenderDetails = this.planetDetails.get(defendingPlanetId).value;
+        const defenderDetails = this.planetDetails.get(defenderLocationHash).value;
         assert(
             defenderDetails.owner.equals(sender),
             Errors.PLAYER_HAS_NO_ACCESS
@@ -249,31 +250,36 @@ export class GameRuntime extends RuntimeModule<unknown> {
         );
 
 
-        // // STEP 6: update the states based on the battle result
-        // const didDefenseWin = publicOutput.didDefenseWin;
-        // const defenderpoints = defenderDetails.points;
+        // STEP 6: update the states based on the battle result
+        const didDefenseWin = publicOutput.didDefenseWin;
+        const defenderpoints = defenderDetails.points;
 
-        // const attackerLocationHash = attackInProof.attackerHomePlanet;
-        // const attackerDetails = this.planetDetails.get(attackerHmeWorldId).value;
-        // const attackerPoints = attackerDetails.points;
+        const attackerLocationHash = attackInProof.attackerHash;
+        const attackerDetails = this.planetDetails.get(attackerLocationHash).value;
+        const attackerPoints = attackerDetails.points;
 
-    //     const updatedAttackerPoints = Provable.if(
-    //         didDefenseWin,
-    //         attackerPoints.sub(Consts.WIN_POINTS),
-    //         attackerPoints.add(Consts.LOSE_POINTS)
-    //       );
+        const updatedAttackerPoints = Provable.if(
+            didDefenseWin,
+            attackerPoints.sub(Consts.WIN_POINTS),
+            attackerPoints.add(Consts.LOSE_POINTS)
+          );
 
-    //     const updatedDefenderPoints = Provable.if(
-    //         didDefenseWin,
-    //         defenderpoints.add(Consts.WIN_POINTS),
-    //         defenderpoints.sub(Consts.LOSE_POINTS)
-    //     );
+        const updatedDefenderPoints = Provable.if(
+            didDefenseWin,
+            defenderpoints.add(Consts.WIN_POINTS),
+            defenderpoints.sub(Consts.LOSE_POINTS)
+        );
 
-    //     attackerDetails.points = updatedAttackerPoints;
-    //     defenderDetails.points = updatedDefenderPoints;
+        // update the points
+        attackerDetails.points = updatedAttackerPoints;
+        defenderDetails.points = updatedDefenderPoints;
 
-    //     this.planetDetails.set(defendingPlanetId, defenderDetails);
-    //     this.planetDetails.set(attackerHmeWorldId, attackerDetails);
+        // reset the incoming attack
+        defenderDetails.incomingAttack = EMPTY_ATTACK_FLEET;
+        defenderDetails.incomingAttackTime = Consts.EMPTY_FIELD;
+
+        this.planetDetails.set(defenderLocationHash, defenderDetails);
+        this.planetDetails.set(attackerLocationHash, attackerDetails);
     }
 
 
