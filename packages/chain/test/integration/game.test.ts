@@ -574,7 +574,6 @@ describe("game runtime", () => {
 
     });
 
-
     describe("resolve attack runtime method", () => {
 
         let aliceLocationHash: Field;
@@ -808,6 +807,5 @@ describe("game runtime", () => {
         });
 
     });
-    
 
 });

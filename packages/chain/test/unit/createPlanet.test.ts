@@ -22,8 +22,8 @@ describe("create planet utils", () => {
         coords_in_range.y
     );
 
-    // for (let i = 0; i < 400; i++) {
-    //     for (let j = 0; j < 400; j++) {
+    // for (let i = 0; i < 600; i++) {
+    //     for (let j = 0; j < 600; j++) {
     //         const hash = CreatePlanetUtils.calculateLocationHash(Field(i), Field(j));
     //         if (hash.lessThan(Consts.BIRTHING_DIFFICULTY_CUTOFF).toString() === "true") {
     //             console.log("x: ", i, "y: ", j, "hash: ", hash.toString());

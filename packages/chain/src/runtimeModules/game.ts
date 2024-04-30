@@ -314,17 +314,25 @@ export class GameRuntime extends RuntimeModule<unknown> {
 
         const timeDiff = currentTime.sub(attackTime);
         assert(
-            timeDiff.greaterThanOrEqual(Consts.FORFEIT_BLOCKS_DURATION),
+            timeDiff.greaterThanOrEqual(Consts.TEST_FORFEIT_BLOCKS_DURATION),
             Errors.FORFEIT_CLAIM_DURATION
         );
 
         // STEP 5: update the states based on the forfeit
-        const updatedAttackerPoints = attackerDetails.points.add(Field(1));
-        const updatedDefenderPoints = defenderDetails.points.sub(Field(2));
+
+        // update the points
+        const updatedAttackerPoints = attackerDetails.points.add(Consts.WIN_POINTS);
+        const updatedDefenderPoints = defenderDetails.points.sub(Consts.FORFEIT_POINTS);
+
+        attackerDetails.points = updatedAttackerPoints;
+        defenderDetails.points = updatedDefenderPoints;
 
         // reset the incoming attack
         defenderDetails.incomingAttack = EMPTY_ATTACK_FLEET;
         defenderDetails.incomingAttackTime = Consts.EMPTY_FIELD;
+
+        this.planetDetails.set(locationHash, defenderDetails);
+        this.planetDetails.set(attackerLocationHash, attackerDetails);
     }
 
 }

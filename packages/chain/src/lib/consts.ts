@@ -27,6 +27,9 @@ export namespace Consts {
   // 24 hours - 8640 blocks (10 seconds per block)
   export const FORFEIT_BLOCKS_DURATION = 8640 
 
+  // used for testing purposes
+  export const TEST_FORFEIT_BLOCKS_DURATION = 5; 
+
   // factions const
   export const FACTION_A = Field(1);
   export const FACTION_B = Field(2);
