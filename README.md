@@ -2,11 +2,12 @@
 
 # Dark Armada: Masters of  the Void
 
-## This is the second iteration of Dark Armada, written in protokit (and the third version of the gamme)
+### This is the second iteration of Dark Armada, re-written for protokit from Mina L1 (and the third version of the game)
 
 The prior versions and experiments of the game can be found at: 
+
 * The First iteration is written on Mina L1  [Dark Armada](https://github.com/Cloakworks-collective/dark_armada)
-* The very first trials for the game can be found at [DarkForest Mina](https://github.com/enderNakamoto/Darkforest_Mina)
+* The very first experiments of the concepts can be found at [DarkForest Mina](https://github.com/enderNakamoto/Darkforest_Mina)
 
 ## Table of Contents
 
