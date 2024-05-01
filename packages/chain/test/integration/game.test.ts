@@ -38,7 +38,6 @@ import {
     valid_faction3
 } from "../testUtils";
 import { CreatePlanetUtils } from "../../src/utils/createPlanet";
-import exp from "constants";
 
 log.setLevel("ERROR");
 
