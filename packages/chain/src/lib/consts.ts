@@ -68,4 +68,8 @@ export namespace Consts {
   export const BATTLESHIP_PDC_CAP = Field(300);
   export const DESTROYER_PDC_CAP = Field(200);
   export const CARRIER_PDC_CAP = Field(500);
+
+  // Carrier capacity
+  export const CARRIER_FIGHTERS = Field(40);
+  export const CARRIER_DRONE = Field(200);
 }

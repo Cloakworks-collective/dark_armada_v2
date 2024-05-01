@@ -55,19 +55,20 @@ export class BattleUtils {
         attack: AttackFleet, 
         defense: PlanetaryDefense
     ): LongRangeBattleOutput {
+
+       // STEP 1: Attacking and Defending fleets launch missiles at each other
+
         const aBattleShipSalvo = attack.battleships.mul(Consts.BATTLESHIP_SALVO);
         const aDestroyerSalvo = attack.destroyers.mul(Consts.DESTROYER_SALVO);
         const attackerMissiles = (aBattleShipSalvo.add(aDestroyerSalvo)).
             mul(Consts.NUMBER_OF_MISSILE_SALVOS);
-
-        console.log("Attackers launched missiles: ", attackerMissiles.toString());   
 
         const dBattleShipSalvo = defense.battleships.mul(Consts.BATTLESHIP_SALVO);
         const dDestroyerSalvo = defense.destroyers.mul(Consts.DESTROYER_SALVO);
         const defenderMissiles = (dBattleShipSalvo.add(dDestroyerSalvo)).
             mul(Consts.NUMBER_OF_MISSILE_SALVOS);
 
-        console.log("Defenders launched missiles: ", defenderMissiles.toString());
+        // STEP 2: The fleets launch networked interceptors to try to take out the missiles
 
         const aBattleShipIntercept = attack.battleships.mul(Consts.BATTLESHIP_INTERCEPTOR_CAP);
         const aDestroyerIntercept = attack.destroyers.mul(Consts.DESTROYER_INTERCEPTOR_CAP);
@@ -75,56 +76,35 @@ export class BattleUtils {
         const attackerInterceptors = (aBattleShipIntercept.add(aDestroyerIntercept).add(aCarrierIntercept)).
             mul(Consts.NUMBER_OF_INTERCEPTOR_SALVOS);
 
-        console.log("Attackers launched interceptor");    
-
         const dBattleShipIntercept = defense.battleships.mul(Consts.BATTLESHIP_INTERCEPTOR_CAP);
         const dDestroyerIntercept = defense.destroyers.mul(Consts.DESTROYER_INTERCEPTOR_CAP);
         const dCarrierIntercept = defense.carriers.mul(Consts.CARRIER_INTERCEPTOR_CAP);
         const defenderInterceptors = (dBattleShipIntercept.add(dDestroyerIntercept).add(dCarrierIntercept)).
             mul(Consts.NUMBER_OF_INTERCEPTOR_SALVOS);
-
-        console.log("Defenders launched interceptor");
             
         const attackMissilesGotThru = attackerMissiles.sub(defenderInterceptors);
         const defenseMissilesGotThru = defenderMissiles.sub(attackerInterceptors);
 
-        console.log("Attackers missiles got through: ", attackMissilesGotThru.toString());
-        console.log("Defenders missiles got through: ", defenseMissilesGotThru.toString());
-
         const attackCost = UInt64.from(attack.attackCost());
         const defenseCost = UInt64.from(defense.totalCost());
+
+        // STEP 3:The missiles that got through are used to take out the ships, now it is upto the  individual ship PDCs to take out the missiles
 
         const missilesForABattleShips = UInt64.from((Consts.BATTLESHIP_COST).mul(attack.battleships).mul(defenseMissilesGotThru)).div(attackCost);
         const missilesForADestroyers = UInt64.from((Consts.DESTROYER_COST).mul(attack.destroyers).mul(defenseMissilesGotThru)).div(attackCost);
         const missilesForACarriers = UInt64.from((Consts.CARRIER_COST).mul(attack.carriers).mul(defenseMissilesGotThru)).div(attackCost);
 
-        console.log("Missiles targeting attack battleships", missilesForABattleShips.toString());
-        console.log("Missiles targeting attack destroyers", missilesForADestroyers.toString());
-        console.log("Missiles targeting attack carriers", missilesForACarriers.toString());
-
         const missilesForDBattleShips = UInt64.from((Consts.BATTLESHIP_COST).mul(defense.battleships).mul(attackMissilesGotThru)).div(defenseCost);
         const missilesForDDestroyers = UInt64.from((Consts.DESTROYER_COST).mul(defense.destroyers).mul(attackMissilesGotThru)).div(defenseCost);
         const missilesForDCarriers = UInt64.from((Consts.CARRIER_COST).mul(defense.carriers).mul(attackMissilesGotThru)).div(defenseCost);
-
-        console.log("Missiles targeting defense battleships", missilesForDBattleShips.toString());
-        console.log("Missiles targeting defense destroyers", missilesForDDestroyers.toString());
-        console.log("Missiles targeting defense carriers", missilesForDCarriers.toString());
 
         const aBattleshipsDestroyed = missilesForABattleShips.div(UInt64.from(Consts.BATTLESHIP_PDC_CAP)).value;
         const aDestroyersDestroyed = missilesForADestroyers.div(UInt64.from(Consts.BATTLESHIP_PDC_CAP)).value;
         const aCarriersDestroyed = missilesForACarriers.div(UInt64.from(Consts.BATTLESHIP_PDC_CAP)).value;
 
-        console.log("Attack battleships destroyed", aBattleshipsDestroyed.toString());
-        console.log("Attack destroyers destroyed", aDestroyersDestroyed.toString());
-        console.log("Attack carriers destroyed", aCarriersDestroyed.toString());
-
         const dBattleshipsDestroyed = missilesForDBattleShips.div(UInt64.from(Consts.BATTLESHIP_PDC_CAP)).value;
         const dDestroyersDestroyed = missilesForDDestroyers.div(UInt64.from(Consts.BATTLESHIP_PDC_CAP)).value;
         const dCarriersDestroyed = missilesForDCarriers.div(UInt64.from(Consts.BATTLESHIP_PDC_CAP)).value;
-
-        console.log("Defense battleships destroyed", dBattleshipsDestroyed.toString());
-        console.log("Defense destroyers destroyed", dDestroyersDestroyed.toString());
-        console.log("Defense carriers destroyed", dCarriersDestroyed.toString());
 
         return new LongRangeBattleOutput({
             aMissiles: attackerMissiles,
