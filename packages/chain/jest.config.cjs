@@ -5,6 +5,7 @@
 
 module.exports = {
     // because we run tests from within ./packages/<package_name>/
+    timers: "fake",
     rootDir: './',
     moduleDirectories: ["node_modules", "src", "test"],
     testPathIgnorePatterns: ["dist"],
