@@ -139,3 +139,19 @@ export async function computeBattleMockProof(
     publicOutput: publicOutput,
   });
 }
+
+
+export const test_planetary_defense = new PlanetaryDefense({
+    battleships: Field(10),
+    destroyers: Field(30),
+    carriers: Field(5),
+    odps: Field(100)
+});
+
+export const test_attack_fleet = new AttackFleet({
+    attackerHash: valid_alice_hash,
+    battleships: Field(12),
+    destroyers: Field(20),
+    carriers: Field(2),
+    troopTransports: Field(50)
+});

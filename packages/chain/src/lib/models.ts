@@ -1,6 +1,7 @@
 import { Struct, Field, PublicKey, Bool } from 'o1js';
 import { Consts } from './consts';
 
+
 export class PlanetaryDefense extends Struct({
   battleships: Field,
   destroyers: Field,
@@ -64,10 +65,29 @@ export class Planet extends Struct({
     attackingFleet: AttackFleet,
   }) {};
 
+  export class LongRangeBattleOutput extends Struct({
+    aMissiles: Field,
+    dMissiles: Field,
+    aIntercepted: Field,
+    dIntercepted: Field,
+    aBattleshipsLost: Field,
+    aDestroyersLost: Field,
+    aCarriersLost: Field,
+    dBattleshipsLost: Field,
+    dDestroyersLost: Field,
+    dCarriersLost: Field
+  }) {};
+
+  export class BattleCalculationOutput extends Struct({
+    phaseOne: LongRangeBattleOutput,
+  }) {};
+
   /** Commonly used Interfaces */
   export interface Coordinates {
     x: Field;
     y: Field;
   }
+
+
 
   
