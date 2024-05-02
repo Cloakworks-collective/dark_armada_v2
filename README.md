@@ -49,27 +49,23 @@ There are both Unit and Integration Tests that can be found in the `test` folder
 
 ## Background
 
-"Dark Armada: Masters of the Void" is a massively multiplayer online (MMO) game that utilizes Zero Knowledge Proofs (ZKPs) to create a verifiable fog of war. Inspired by the "Dark Forest zkSNARK space warfare" game, which was implemented on EVM with Circom circuits, this version is developed in O1js—a TypeScript embedded DSL for ZK. The Game is developed as a Rollup on Mina L1 using "Protokit". Additionally, the game logic has been significantly revised to enhance strategic depth, and provide a completely different experience than that of "dark forest".
+"Dark Armada: Masters of the Void" is a massively multiplayer online (MMO) game that leverages Zero Knowledge Proofs (ZKPs) to engineer a verifiable fog of war. Drawing inspiration from the original "Dark Forest zkSNARK space warfare" game, which was built on EVM using Circom circuits, this new iteration is crafted in O1js—a TypeScript embedded DSL dedicated to ZK applications. Significantly, this game version is uniquely redesigned as an appchain rollup on the Mina L1 blockchain, utilizing "Protokit" for development. The game mechanics have also been extensively overhauled to deepen strategic elements and offer a gameplay experience distinctively different from the original "Dark Forest."
 
 ## Introduction to the game 
 
-Imagine an expansive galaxy teeming with myriad planets, each fortified and primed for cosmic conflict. As a player, you are thrust into this universe by assuming command of one of these planets, becoming its ruler and guardian. Upon embarking on this interstellar journey, players take control of planets and covertly organize defensive fleets, concealed from adversaries through the use of zero-knowledge proofs (zk-SNARKs). 
+Imagine a vast galaxy filled with countless planets, each fortified and ready for interstellar warfare. As a player, you enter this universe by taking command of one of these planets, becoming its ruler and protector. In this cosmic adventure, players control planets and secretly arrange defensive fleets. These fleets remain hidden from opponents through the use of zero-knowledge proofs (zk-SNARKs). 
 
-Both the planet coordinates and their defensive strategies remain private. Only the hashes of these coordinates and defensive tactics are stored on-chain in the Protokot rollup statemap.
+Both the coordinates of the planets and their defensive strategies are kept confidential; only the hashes of these coordinates and tactics are recorded on-chain in the Protokot rollup Statemap. Details of the planetary defenses and the exact coordinates are processed locally and never leave the player's computer, ensuring the utmost privacy of strategic information.
 
 ## How are Planets spawned?
 
-Creating a universe that balances realism with engaging gameplay presents a unique challenge. 
-We use Poseidon hash functions to generate planet coordinates, adjusting their rarity by modifying the number of leading zeros in the hash values. This method creates a randomized yet controlled distribution of planets, essential for gameplay dynamics. 
+Creating a universe that balances realism with engaging gameplay presents a unique challenge. To generate planet coordinates, we employ Poseidon hash functions, tweaking the rarity of these coordinates by altering the number of leading zeros in the hash values. This method creates a randomized yet controlled distribution of planets, essential for gameplay dynamics.. The process of finding these difficult hashes is somewhat akin to the mining process in Bitcoin.
 
 ![alt text](images/spawn.png)
 
-
 ## How are Planets discovered?
 
-Planet coordinates are kept private, with only their Poseidon hash values stored in rollup statemap. Players must "mine" to uncover the concealed coordinates of other planets, scanning the vast universe with limited range and employing Poseidon hash collision techniques to discover them.
-
-Picture yourself navigating the immense universe, where you're limited to scanning (enumerating) the nearby space—using hash collision to seek out other planets.
+Planet coordinates are kept private, with only their Poseidon hash values stored in rollup statemap. Players must "mine" to uncover the concealed coordinates of other planets, scanning the vast universe with limited range and employing Poseidon hash collision techniques to discover them. Picture yourself navigating the immense universe, where you're limited to scanning (enumerating) the nearby space—using hash collision to seek out other planets.
 
 Here is the 2 step process of Initiating a planet, and "mining" for the location of the planet: 
 
@@ -109,7 +105,7 @@ Step 3: Battle Computations
 
 ![alt text](images/step3_battle.png)
 
-Step 4(Optional) : Plunder Planet
+Step 4: Forfeiting an Attack
 
 If the defender (Player 1) anticipates that an incoming attack will likely lead to a defeat, they may opt to "ghost" the attacker by failing to submit the required proof. To address this scenario, we've introduced a "collect forfeit" mechanism. This allows an attacker (Player 2) to essentially loot the planet if the defender does not provide proof of defense within a specified timeframe.
 
