@@ -13,7 +13,7 @@ export function defenseValidator(
 ): DefendPlanetPublicOutput {
 
     // verify defense has valid strength
-    DefendPlanetUtils.verifyCrew(defense);
+    DefendPlanetUtils.verifyCost(defense);
 
     const defenseHash = DefendPlanetUtils.calculateDefenseHash(defense, salt);
     const crewNeeded = defense.totalCost();

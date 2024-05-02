@@ -12,7 +12,7 @@ export class DefendPlanetUtils {
         return Poseidon.hash(PlanetaryDefense.toFields(defense).concat([salt]));
     }
 
-    static verifyCrew(defense: PlanetaryDefense){
+    static verifyCost(defense: PlanetaryDefense){
         const totalCrew = defense.totalCost();
         totalCrew.assertLessThanOrEqual(
             Consts.MAX_DEFENSE_COST, 

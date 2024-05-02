@@ -11,40 +11,23 @@ The prior versions and experiments of the game can be found at:
 
 ## Table of Contents
 
-- [Dark Armada: Masters of  the Void](#dark-armada--masters-of--the-void)
-  * [Running Tests](#running-tests)  
-  * [Background](#background)
-  * [Introduction to the game](#introduction-to-the-game)
-  * [How are Planets spawned?](#how-are-planets-spawned)
-  * [How are Planets discovered?](#how-are-planets-discovered)
-  * [How Battles work?](#how-battles-work)
-  * [ZKPs in the game:](#zkps-in-the-game)
-    + [Planet Initiation](#planet-initiation)
-    + [Fleet Initialization](#fleet-initialization)
-    + [Battle computation](#battle-computation)
-  * [Spawning Solar systems/Planets](#spawning-solar-systems-planets)
-    + [Numerical Insights on spawning:](#numerical-insights-on-spawning)
-  * [Mining Planets (Benchmarking)](#mining-planets--benchmarking)
-      - [Poseidon hashing on M1 Mac](#poseidon-hashing-on-m1-mac)
-      - [Keccak256 hashing on M1 Mac](#keccak256-hashing-on-m1-mac)
-      - [Chain Poseidon hash on M1 Mac](#chain-poseidon-hash-on-m1-mac)
-  * [Game Progress](#game-progress)    
-  * [References](#references)
-
-This repository is a monorepo aimed at kickstarting application chain development using the Protokit framework.
-
-## Running tests
-```zsh
-cd packages/chain
-npm test -- --verbose
-```
-
-The test results: 
-![alt text](images/test1.png)
-
-There are both Unit and Integration Tests that can be found in the `test` folder of `packages/chain`
-
-![alt text](images/testFolder.png)
+- [Background](#background)
+- [Introduction to the game](#introduction-to-the-game)
+- [How are Planets spawned?](#how-are-planets-spawned-)
+- [How are Planets discovered?](#how-are-planets-discovered-)
+- [How Battles work?](#how-battles-work-)
+- [ZKPs in the game:](#zkps-in-the-game-)
+  * [Planet Initiation](#planet-initiation)
+  * [Fleet Initialization (Defending a Planet)](#fleet-initialization--defending-a-planet-)
+  * [Battle computation](#battle-computation)
+  * [Numerical Insights on spawning:](#numerical-insights-on-spawning-)
+- [Mining Planets (Benchmarking)](#mining-planets--benchmarking-)
+    + [Poseidon hashing on M1 Mac](#poseidon-hashing-on-m1-mac)
+    + [Keccak256 hashing on M1 Mac](#keccak256-hashing-on-m1-mac)
+    + [Chain Poseidon hash on M1 Mac](#chain-poseidon-hash-on-m1-mac)
+- [Running tests](#running-tests)
+- [Development Progress](#development-progress)
+- [References](#references)
 
 
 ## Background
@@ -123,41 +106,26 @@ Dark Armada uses ZKP to prove 3 operations regarding planet location and fleet e
 
 While initiating a planet we submit a proof three things: 
 
-1. The max number of planets not reached
-2. Player is in the whitelist 
-3. Initiated Planet co-ordinates are within the game universe.
+1. Initiated Planet co-ordinates are within the game universe.
+2. Chosen Faction of the Planet is valid
+3. And the difficulty of the locationHash is valid
+
+This Proof is generated in Player's local machine, and submitted to protokit runtime where the proof is verified and the action is further verified against on-chain data before a planet os created 
+
+
+### Fleet Initialization (Defending a Planet)
+
+While initiating a planetary defense, or assembling an attack fleet to attack other planets
+We check that the max cost limit for assembling such fleet was observed 
 
 ```typescript
-   // STEP 1: check if the number of planets reached MAX_NUM_PLANETS
-    let planetsNumBefore = this.numberOfPlanets.getAndRequireEquals();
-    planetsNumBefore.assertLessThan(Const.MAX_NUM_PLANETS, Errors.MAX_NUM_PLANETS_ERROR);
-
-    // STEP 2: check if the player is in the whitelist, and has not initiated a homeworld
-    const currentPlayer = Poseidon.hash(this.sender.toFields());
-    let nullRootBefore = this.playerNullifierRoot.getAndRequireEquals();
-
-    [ derivedNullRoot, derivedNullKey ] = nullifierKeyWitness.computeRootAndKey(Const.WHITELISTED_VALUE);
-    derivedNullRoot.assertEquals(nullRootBefore, Errors.PLAYER_CANNOT_INITIATE_ERROR);
-    derivedNullKey.assertEquals(currentPlayer, Errors.PLAYER_CANNOT_INITIATE_ERROR);
-    
-
-    // STEP 3: check if the coordinate is within the game radius
-    const gameLength = this.gameLength.getAndRequireEquals();
-
-    x.assertLessThan(gameLength, Errors.COORDINATE_OUT_OF_RANGE_ERROR);
-    y.assertLessThan(gameLength, Errors.COORDINATE_OUT_OF_RANGE_ERROR);
-```
-
-### Fleet Initialization
-
-While initiating a planetary defense, or assembling an atatck fleet to attack other planets
-We check that the fllet strength does not exceed the max limit set in the game
-
-```typescript
-export function verifyFleetStrength(fleet: Fleet){
-    const fleetStrength = fleet.strength();
-    fleetStrength.assertLessThanOrEqual(Const.MAX_FLEET_STRENGTH, Errors.FLEET_STRENGTH_ERROR);
-}
+ static verifyCost(defense: PlanetaryDefense){
+        const totalCrew = defense.totalCost();
+        totalCrew.assertLessThanOrEqual(
+            Consts.MAX_DEFENSE_COST, 
+            Errors.PLANETARY_DEFENSE_COST
+        );
+    }
 ```
 
 ### Battle computation 
@@ -165,32 +133,49 @@ export function verifyFleetStrength(fleet: Fleet){
 Last, but not the least - we compute fleet battles on client computer of the defender and submit the proof to be validated. 
 
 ```typescript
-  @method computeBattle(
-      attackFleet: Fleet,
-      defenseFleet: Fleet,
-      battleKeyWitness: MerkleMapWitness
-  )
-  {
-      // STEP 0: make sure that the attacking army is valid
-      verifyFleetStrength(attackFleet);
-    
-      // STEP 1 :calculate the winner
-      const winner = calculateWinner(attackFleet, defenseFleet);
-      
-      // STEP 2 : Set the winner 
-      const [battleMapRoot, _] = battleKeyWitness.computeRootAndKey(winner);
-      this.battleHistoryMapRoot.set(battleMapRoot);
-      
-      // STEP 3 : Increment the number of battles
-      const currentBattles = this.numberOfBattles.getAndRequireEquals();
-      this.numberOfBattles.set(currentBattles.add(Field(1)));
+    static computeSimpleWinner(
+        attack: AttackFleet, 
+        defense: PlanetaryDefense
+    ): Bool {
+    const attackeBattleships = attack.battleships.mul(
+        Consts.BATTLESHIP_STRENGTH
+        );
+        const attackeDestroyers = attack.destroyers.mul(
+        Consts.DESTROYER_STRENGTH
+        );
+        const attackeCarriers = attack.carriers.mul(Consts.CARRIER_STRENGTH);
 
-      // STEP 4 : emit the event
-      this.emitEvent("battle winner", winner);
-  }
+        const defenderBattleships = defense.battleships.mul(
+        Consts.BATTLESHIP_STRENGTH
+        );
+        const defenderDestroyers = defense.destroyers.mul(Consts.DESTROYER_STRENGTH);
+        const defenderCarriers = defense.carriers.mul(Consts.CARRIER_STRENGTH);
+
+        //  battleships > destroyers
+        const battleshipsBeatsDestroyers =
+        attackeBattleships.sub(defenderDestroyers);
+
+        // destroyers > carriers
+        const destroyersBeatsCarriers = attackeDestroyers.sub(defenderCarriers);
+
+        // carriers > battleships
+        const carriersBeatsBattleships = attackeCarriers.sub(defenderBattleships);
+
+        const battleResult = battleshipsBeatsDestroyers
+        .add(destroyersBeatsCarriers)
+        .add(carriersBeatsBattleships);
+
+        const defended = Provable.if(
+        battleResult.greaterThanOrEqual(Field(1)),
+            Bool(true),
+            Bool(false)
+        );
+
+        return defended;
+    }
 ```
 
-Now let's explain the `calculateWinner() function`.In the game POC, as of now the fleets consist of 3 units - Battleships, Destroyers and Carriers
+Now let's explain the `computeSimpleWinner() function`.In the game POC, as of now the fleets consist of 3 units - Battleships, Destroyers and Carriers
 
 
 In the Rock-Paper-Scissor esque fashion, some units perform better (has an advantage over other units)
@@ -201,43 +186,11 @@ In the Rock-Paper-Scissor esque fashion, some units perform better (has an advan
 For now, We simply find winners of Battleship-Destroyer, Destroyer-Carrier and Carrier-Battleship engagements, and the player who won 2 out of 3 engagements in vrowned the winner.
 This is subject to more change as the game evolves.
 
-```typescript
-function calculateWinner(attackFleet: Fleet, defenseFleet: Fleet): Field{
-  const attackeBattleships = attackFleet.battleships.mul(Const.BATTLESHIP_COST);
-  const attackeDestroyers = attackFleet.destroyers.mul(Const.DESTROYER_COST);
-  const attackeCarriers = attackFleet.carriers.mul(Const.CARRIER_COST);
-
-  const defenderBattleships = defenseFleet.battleships.mul(Const.BATTLESHIP_COST);
-  const defenderDestroyers = defenseFleet.destroyers.mul(Const.DESTROYER_COST);
-  const defenderCarriers = defenseFleet.carriers.mul(Const.CARRIER_COST);
-
-    //  battleships > destroyers
-    const battleshipsBeatsDestroyers = attackeBattleships.sub(defenderDestroyers);
-
-    // destroyers > carriers
-    const destroyersBeatsCarriers = attackeDestroyers.sub(defenderCarriers);
-
-    // carriers > battleships
-    const carriersBeatsBattleships = attackeCarriers.sub(defenderBattleships);
-
-    const battleResult = battleshipsBeatsDestroyers.add(destroyersBeatsCarriers).add(carriersBeatsBattleships);
-
-    const calculatedWinner = Provable.if(
-      battleResult.greaterThanOrEqual(
-        Field(0)
-      ),
-      defenseFleet.playerId,
-      attackFleet.playerId
-    );
-
-    return calculatedWinner
-} 
-```
-
+A much more complicated battle systed is a Work In progress
 
 ### Numerical Insights on spawning:
 
-The scripts for the numerical tests is in `helpers/birthing.ts` 
+The scripts for the numerical tests is in `helpers/birthing.ts` of [DarkForest Mina](https://github.com/enderNakamoto/Darkforest_Mina)
 
 **Initial Test**: On a 200 x 200 grid (40,000 locations), the number of planets varied significantly with the change in leading zeros:
 
@@ -252,7 +205,7 @@ The coordinates of planets are stored as private data and are not publicly discl
 
 In a game arena, be it a square grid of dimensions N x N or a circle with radius R, the objective is to discover the private coordinates of all planets. This is achieved through identifying hash collisions - by generating and comparing the Poseidon hashes for every possible coordinate pair within the game's defined space.
 
-The experiment at `helpers/exp/mining.ts` aims to determine the time frame necessary to uncover the coordinates of all planets via hash collisions. The findings from this experiment will be pivotal in defining the size of the search space (game world), ensuring it offers an adequate level of challenge while maintaining cryptographic integrity.
+The experiment at `helpers/exp/mining.ts` in [DarkForest Mina](https://github.com/enderNakamoto/Darkforest_Mina)  aims to determine the time frame necessary to uncover the coordinates of all planets via hash collisions. The findings from this experiment will be pivotal in defining the size of the search space (game world), ensuring it offers an adequate level of challenge while maintaining cryptographic integrity.
 
 We also compare Poseidon with with Keccak 
 
@@ -281,6 +234,18 @@ e.g. with a N of 100,000 -  hasing 100 co-ordinates will take more than 4 minute
 
 Thus, given a big enough universe, it would be quite hard for anyone to bruteforce all the co-ordinates.
 
+## Running tests
+```zsh
+cd packages/chain
+npm test -- --verbose
+```
+
+The test results: 
+![alt text](images/test1.png)
+
+There are both Unit and Integration Tests that can be found in the `test` folder of `packages/chain`
+
+![alt text](images/testFolder.png)
 
 ## Development Progress
 

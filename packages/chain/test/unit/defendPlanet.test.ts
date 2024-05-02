@@ -22,13 +22,13 @@ describe("defend planet utils", () => {
 
     it("should verify planetary defense strength", async () => {
         expect(() => {
-            DefendPlanetUtils.verifyCrew(valid_defense);
+            DefendPlanetUtils.verifyCost(valid_defense);
         }).not.toThrow();
     });
 
     it("should throw an error if crew needed to man defense is too high", async () => {
         expect(() => {
-            DefendPlanetUtils.verifyCrew(invalid_defense);
+            DefendPlanetUtils.verifyCost(invalid_defense);
         }).toThrow(Errors.PLANETARY_DEFENSE_COST);
     });
 
