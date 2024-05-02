@@ -188,7 +188,16 @@ This is subject to more change as the game evolves.
 
 A much more complicated battle systed is a Work In progress
 
-### Numerical Insights on spawning:
+## Appchain Architecture: 
+
+### How are inputs kept private? 
+The private inputs are processed by zkPrograms which produces proof, and then passed into runtime methods for verification. The private inputs never leave local machine
+
+The public inputs are directly fed into runtime methods of the appchain.
+
+![alt text](images/architecture.png)
+
+## Numerical Insights on spawning:
 
 The scripts for the numerical tests is in `helpers/birthing.ts` of [DarkForest Mina](https://github.com/enderNakamoto/Darkforest_Mina)
 
