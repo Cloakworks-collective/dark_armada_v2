@@ -190,6 +190,67 @@ This is subject to more change as the game evolves.
 
 A much more complicated battle systed is a Work In progress
 
+## Complex Battle System (Work In progress)
+
+Since the Battle between the two fleets are computed in the local machine, and only the proof is forwarded to the Protokit runtime, 
+we can increase the battle complexity to increase the strategic depth of he game. 
+
+Here's the complex battle system that takes advantage of the scalability of the Protokit/Mina Architecture: 
+
+### Units
+These are the units participating the in complex battle: 
+
+![alt text](images/complex_battle1.png)
+
+The fleet composition is as follows: 
+
+```typescript
+export interface AttackingFleet {
+  battleships: UInt64,
+  destroyers: UInt64,
+  carriers: UInt64,
+  fighters: UInt64,
+  drones: UInt64,
+  troopTransports: UInt64,
+  dropShips: UInt64,
+}
+
+export interface DefendingFleet {
+  battleships: UInt64,
+  destroyers: UInt64,
+  carriers: UInt64,
+  fighters: UInt64,
+  drones: UInt64,
+  odps: UInt64,
+}
+```
+
+The Battle Happens in several phases Phases. Let's look at an example battle to understand the phases
+
+![alt text](images/complex_battle2.png)
+
+### Phase 1 - The Long Range Engagement
+
+During the initial phase of the engagement, both destroyers and battleships deploy missiles aimed at incapacitating the opposing fleet. Simultaneously, they launch interceptors with the goal of neutralizing incoming missiles. This dual-action forms the first line of defense and attack, where each fleet's success depends on the effectiveness of their interceptors in disabling the threats from the opposing side.
+
+As missiles penetrate through the opposing fleet's interceptor defenses, they then target individual ships. At this stage, the ships' point defense cannons (PDCs) come into play. These cannons are crucial for the last line of defense, tasked with destroying any remaining missiles that have evaded the initial wave of interceptors.
+
+When the PDCs of a ship reach their capacity and can no longer effectively defend against incoming missiles, the ship becomes vulnerable. Overwhelmed by the missile barrage, these ships are either disabled or destroyed, removing them from the ongoing battle. This process decisively impacts the fleet's operational capabilities and can significantly alter the course of the engagement.
+
+![alt text](images/complex_battle3.png)
+
+### Phase 2 - Capital Ship Engagement
+
+![alt text](images/complex_battle4.png)
+
+### Phase 3 - Carrier Engagement 
+
+![alt text](images/complex_battle5.png)
+
+### Phase 4 - Planetfall
+
+![alt text](images/complex_battle6.png)
+
 ## Appchain Architecture: 
 
 ### How are inputs kept private? 
