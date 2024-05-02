@@ -1,5 +1,6 @@
 import { Struct, Field, PublicKey, Bool } from 'o1js';
 import { Consts } from './consts';
+import { UInt64 } from '@proto-kit/library';
 
 
 export class PlanetaryDefense extends Struct({
@@ -73,14 +74,33 @@ export class Planet extends Struct({
 
 /** COMPLEX BATTLE OBJECTS */
 
+export interface AttackingFleet {
+  battleships: UInt64;
+  destroyers: UInt64;
+  carriers: UInt64;
+  troopTransports: UInt64;
+}
+
+export interface DefendingFleet {
+  battleships: UInt64;
+  destroyers: UInt64;
+  carriers: UInt64;
+  odps: UInt64;
+}
+
+export interface RemainingFleet {
+  attacker: AttackingFleet,
+  defender: DefendingFleet
+}
+
 // PHASE 1: LONG RANGE BATTLE
 
 export interface LongRangeFleetPerformance {
-  missilesLaunched: Field,
-  missilesIntercepted: Field,
-  battleshipsLost: Field,
-  destroyersLost: Field,
-  carriersLost: Field
+  missilesLaunched: UInt64,
+  missilesIntercepted: UInt64,
+  battleshipsLost: UInt64,
+  destroyersLost: UInt64,
+  carriersLost: UInt64
 }
 
 export interface LongRangeBattleOutput {
@@ -91,9 +111,11 @@ export interface LongRangeBattleOutput {
 // PHASE 2: CAPITAL SHIP CLASH
 
 export interface ShipDeployment {
-  battleshipsEngaging: Field;
-    destroyersEngaging: Field;
-    battleshipsTargetingCarriers: Field;
+  battleships: UInt64,
+  destroyers: UInt64,
+  fighters: UInt64,
+  drones: UInt64,
+  battleshipsLeft: UInt64,
 }
 
 export interface BattlePlan {
