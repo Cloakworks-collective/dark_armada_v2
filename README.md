@@ -15,7 +15,8 @@ The prior versions and experiments of the game can be found at:
   * [Running Tests](#running-tests)  
   * [Background](#background)
   * [Introduction to the game](#introduction-to-the-game)
-  * [How are Planets initiated and discovered?](#how-are-planets-initiated-and-discovered)
+  * [How are Planets spawned?](#how-are-planets-spawned)
+  * [How are Planets discovered?](#how-are-planets-discovered)
   * [How Battles work?](#how-battles-work)
   * [ZKPs in the game:](#zkps-in-the-game)
     + [Planet Initiation](#planet-initiation)
@@ -48,19 +49,25 @@ There are both Unit and Integration Tests that can be found in the `test` folder
 
 ## Background
 
-"Dark Armada: Masters of the Void" is a massively multiplayer online (MMO) game that utilizes Zero Knowledge Proofs (ZKPs) to create a verifiable fog of war. Inspired by the "Dark Forest zkSNARK space warfare" game, which was implemented on EVM with Circom circuits, this version is developed in O1js—a TypeScript embedded DSL for ZK—and the contracts are deployed on Mina. Additionally, the game logic has been significantly revised to enhance strategic depth,a nd provide a completely different experience than that of "dark forest".
+"Dark Armada: Masters of the Void" is a massively multiplayer online (MMO) game that utilizes Zero Knowledge Proofs (ZKPs) to create a verifiable fog of war. Inspired by the "Dark Forest zkSNARK space warfare" game, which was implemented on EVM with Circom circuits, this version is developed in O1js—a TypeScript embedded DSL for ZK. The Game is developed as a Rollup on Mina L1 using "Protokit". Additionally, the game logic has been significantly revised to enhance strategic depth, and provide a completely different experience than that of "dark forest".
 
 ## Introduction to the game 
 
 Imagine an expansive galaxy teeming with myriad planets, each fortified and primed for cosmic conflict. As a player, you are thrust into this universe by assuming command of one of these planets, becoming its ruler and guardian. Upon embarking on this interstellar journey, players take control of planets and covertly organize defensive fleets, concealed from adversaries through the use of zero-knowledge proofs (zk-SNARKs). 
 
-Both the planet coordinates and their defensive strategies remain private. Only the hashes of these coordinates and defensive tactics are stored in public off-chain storage. The Mina smart contract on-chain maintains the root of Merkle Maps for planet location and planet defense, verifying the integrity of the off-chain storage.
+Both the planet coordinates and their defensive strategies remain private. Only the hashes of these coordinates and defensive tactics are stored on-chain in the Protokot rollup statemap.
+
+## How are Planets spawned?
+
+Creating a universe that balances realism with engaging gameplay presents a unique challenge. 
+We use Poseidon hash functions to generate planet coordinates, adjusting their rarity by modifying the number of leading zeros in the hash values. This method creates a randomized yet controlled distribution of planets, essential for gameplay dynamics. 
+
+![alt text](images/spawn.png)
 
 
+## How are Planets discovered?
 
-## How are Planets initiated and discovered?
-
-Planet coordinates are kept private, with only their Poseidon hash values stored in public off-chain storage. The on-chain Mina smart contract secures the integrity of these locations through the root of Merkle Maps. Players must "mine" to uncover the concealed coordinates of other planets, scanning the vast universe with limited range and employing Poseidon hash collision techniques to discover them.
+Planet coordinates are kept private, with only their Poseidon hash values stored in rollup statemap. Players must "mine" to uncover the concealed coordinates of other planets, scanning the vast universe with limited range and employing Poseidon hash collision techniques to discover them.
 
 Picture yourself navigating the immense universe, where you're limited to scanning (enumerating) the nearby space—using hash collision to seek out other planets.
 
@@ -68,7 +75,7 @@ Here is the 2 step process of Initiating a planet, and "mining" for the location
 
 Step 1: Initiating Planets
 
-A player picks a co-ordinate, e.g. (3,1), and generates proof that those co-ordinates are within the game universe. Once the proof is verified on Mina Blockchain, the merkle map root is updated, and the markle map is stored off-chain.
+A player picks a co-ordinate, e.g. (3,1), and generates proof that those co-ordinates are within the game universe. Once the proof is verified on Protokit Appchain Runtime, the location hash is stored in the rollup statemap.
 
 ![alt text](images/initiate.png)
 
@@ -86,7 +93,7 @@ Here's the 4 step process of how battles work:
 
 Step 1: Initiating Defense Fleet
 
-Player 1 (Planet owner), sets up a hidden defense fleet for a planet. The details of this fleet are kept private and stored off-chain. To validate the existence and the integrity of the fleet without revealing its specifics, a zero-knowledge proof (ZK Proof) is generated and then verified. Once the proof is verified, the merkle map roots to reflect the new state in Mina blockchain.
+Player 1 (Planet owner), sets up a hidden defense fleet for a planet. The details of this fleet are kept private and stored off-chain. To validate the existence and the integrity of the fleet without revealing its specifics, a zero-knowledge proof (ZK Proof) is generated and then verified in appchain runtime. Once the proof is verified, the defensehash (and not the details) are stored in Rollup Statemap.
 
 ![alt text](images/step1_battle.png)
 
@@ -230,13 +237,6 @@ function calculateWinner(attackFleet: Fleet, defenseFleet: Fleet): Field{
     return calculatedWinner
 } 
 ```
-
-
-## Spawning Solar systems/Planets
-Creating a universe that balances realism with engaging gameplay presents a unique challenge. 
-We use Poseidon hash functions to generate planet coordinates, adjusting their rarity by modifying the number of leading zeros in the hash values. This method creates a randomized yet controlled distribution of planets, essential for gameplay dynamics. 
-
-![alt text](images/spawn.png)
 
 
 ### Numerical Insights on spawning:
