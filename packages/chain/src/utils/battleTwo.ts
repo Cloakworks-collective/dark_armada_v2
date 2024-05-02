@@ -15,7 +15,8 @@ import {
     LongRangeBattleOutput,
     BattlePlan,
     Phase2Result,
-    Phase3Result
+    Phase3Result,
+    Phase4Result
 } from '../lib/models';
 
 
