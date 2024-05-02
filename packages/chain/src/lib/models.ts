@@ -1,6 +1,7 @@
 import { Struct, Field, PublicKey, Bool } from 'o1js';
 import { Consts } from './consts';
 import { UInt64 } from '@proto-kit/library';
+import exp from 'constants';
 
 
 export class PlanetaryDefense extends Struct({
@@ -163,6 +164,31 @@ export interface Phase3Result {
   defender: Phase3DefenseFleetLoss,
   didAttackerWin: Bool
 }
+
+// PHASE 4: TROOP LANDING
+
+export interface Phase4AttackFleetResult {
+  fighters: UInt64,
+  drones: UInt64,
+  dropships: UInt64,
+  dropshipsLanded: UInt64,
+  troopsLanded: UInt64
+}
+
+export interface Phase4DefenseFleetResult {
+  fighters: UInt64,
+  drones: UInt64,
+  odps: UInt64,
+}
+
+export interface Phase4Result {
+  attacker: Phase4AttackFleetResult,
+  defender: Phase4DefenseFleetResult,
+  didAttackerWin: Bool
+}
+
+
+
 
 
 

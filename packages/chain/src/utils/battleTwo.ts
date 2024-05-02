@@ -161,7 +161,7 @@ export class BattleTwoUtils {
     }
 
 
-    /** PHASE 2 */
+    /** PHASE 2 - CAPITAL SHIP ENCOUNTER*/
 
     static calculateBattlePlans(
         attack: AttackingFleet, 
@@ -349,7 +349,7 @@ export class BattleTwoUtils {
         };
     }
 
-    static calculateFleetAfterPhaseII(
+    static calculateFleetAfterPhase2(
         attack: AttackingFleet,
         defense: DefendingFleet,
         result: Phase2Result
@@ -380,7 +380,7 @@ export class BattleTwoUtils {
 
     }
 
-    /** PHASE 3 */
+    /** PHASE 3  - FLEET ENGAGEMENTS */
 
     static fleetsForPhase3(
         attack: AttackingFleet,
@@ -478,6 +478,135 @@ export class BattleTwoUtils {
                 battleships: dBattleShipLosses,
                 destroyers: dDestroyerLosses,
                 carriers: dCarrierLosses,
+                fighters: dFighterLosses,
+                drones: dDroneLosses,
+                odps: dOdpsLosses
+            },
+            didAttackerWin: attackWins
+        };
+
+    }
+
+    static calculateFleetAfterPhase3(
+        attack: AttackingFleet,
+        defense: DefendingFleet,
+        result: Phase3Result
+    ) :RemainingFleet {
+        const remainingAttackingFleet: AttackingFleet = {
+            battleships: attack.battleships.sub(result.attacker.battleships),
+            destroyers: attack.destroyers.sub(result.attacker.destroyers),
+            carriers: attack.carriers.sub(result.attacker.carriers),
+            fighters: attack.fighters.sub(result.attacker.fighters),
+            drones: attack.drones.sub(result.attacker.drones),
+            troopTransports: attack.troopTransports.sub(result.attacker.troopTransports),
+            dropShips: attack.dropShips
+        };
+
+        const remainingDefendingFleet: DefendingFleet = {
+            battleships: defense.battleships.sub(result.defender.battleships),
+            destroyers: defense.destroyers.sub(result.defender.destroyers),
+            carriers: defense.carriers.sub(result.defender.carriers),
+            fighters: defense.fighters.sub(result.defender.fighters),
+            drones: defense.drones.sub(result.defender.drones),
+            odps: defense.odps.sub(result.defender.odps)
+        };
+
+        return {
+            attacker: remainingAttackingFleet,
+            defender: remainingDefendingFleet
+        };
+
+    }
+
+    /** PHASE 4 - PLANETARY DROP */
+
+    static fleetsForPhase4(
+        attack: AttackingFleet,
+        defense: DefendingFleet,
+    ):RemainingFleet {
+        const remainingAttackingFleet: AttackingFleet = {
+            battleships: UInt64.from(0),
+            destroyers: UInt64.from(0),
+            carriers: UInt64.from(0),
+            fighters: attack.fighters,
+            drones: attack.drones,
+            troopTransports: attack.troopTransports,
+            dropShips: attack.dropShips
+        };
+
+        const remainingDefendingFleet: DefendingFleet = {
+            battleships: UInt64.from(0),
+            destroyers: UInt64.from(0),
+            carriers: UInt64.from(0),
+            fighters: defense.fighters,
+            drones: defense.drones,
+            odps: defense.odps
+        };
+
+        return {
+            attacker: remainingAttackingFleet,
+            defender: remainingDefendingFleet
+        };
+    }
+
+    static calculatePhase4Result(
+        attack: AttackingFleet,
+        defense: DefendingFleet,
+    ): Phase4Result {
+        const attackStrength = BattleTwoUtils.totalAttackStrength(attack);
+        const defenseStrength = BattleTwoUtils.totalDefenseStrength(defense);
+
+        const attackHealth = BattleTwoUtils.totalAttackHealth(attack);
+        const defenseHealth = BattleTwoUtils.totalDefenseHealth(defense);
+
+        // calculate attack's damage potential on defense
+        const attackDamagePotential = (attackStrength.mul(UInt64.from(1000))).div(defenseHealth);
+
+        // calculate defense's damage potential on attack
+        const defenseDamagePotential = (defenseStrength.mul(UInt64.from(1000))).div(attackHealth);
+
+        const attackWins = Provable.if(
+            attackDamagePotential.greaterThanOrEqual(defenseDamagePotential),
+            Bool(true),
+            Bool(false)
+        );
+
+        const attackLoss = UInt64.from(
+            Provable.if(
+                attackWins,
+                Field(20),
+                Field(50)
+            )
+        );
+
+        const defenseLoss = UInt64.from(
+            Provable.if(
+                attackWins,
+                Field(50),
+                Field(20)
+            )
+        );
+
+        const aFighterLosses = attack.fighters.mul(attackLoss).div(UInt64.from(100));
+        const aDroneLosses = attack.drones.mul(attackLoss).div(UInt64.from(100));
+        const aDropshipLosses = attack.dropShips.mul(attackLoss).div(UInt64.from(100));
+
+        const dFighterLosses = defense.fighters.mul(defenseLoss).div(UInt64.from(100));
+        const dDroneLosses = defense.drones.mul(defenseLoss).div(UInt64.from(100));
+        const dOdpsLosses = defense.odps.mul(defenseLoss).div(UInt64.from(100));
+
+        const aDropShipsLanded = attack.dropShips.sub(aDropshipLosses);
+        const aTroopsLanded = aDropShipsLanded.mul(Consts.TROOP_TRANSPORT_DROPSHIPS);
+
+        return {
+            attacker: {
+                fighters: aFighterLosses,
+                drones: aDroneLosses,
+                dropships: aDropshipLosses,
+                dropshipsLanded: aDropShipsLanded,
+                troopsLanded: aTroopsLanded
+            },
+            defender: {
                 fighters: dFighterLosses,
                 drones: dDroneLosses,
                 odps: dOdpsLosses
