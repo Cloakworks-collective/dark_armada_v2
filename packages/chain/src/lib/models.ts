@@ -75,17 +75,22 @@ export class Planet extends Struct({
 /** COMPLEX BATTLE OBJECTS */
 
 export interface AttackingFleet {
-  battleships: UInt64;
-  destroyers: UInt64;
-  carriers: UInt64;
-  troopTransports: UInt64;
+  battleships: UInt64,
+  destroyers: UInt64,
+  carriers: UInt64,
+  fighters: UInt64,
+  drones: UInt64,
+  troopTransports: UInt64,
+  dropShips: UInt64,
 }
 
 export interface DefendingFleet {
-  battleships: UInt64;
-  destroyers: UInt64;
-  carriers: UInt64;
-  odps: UInt64;
+  battleships: UInt64,
+  destroyers: UInt64,
+  carriers: UInt64,
+  fighters: UInt64,
+  drones: UInt64,
+  odps: UInt64,
 }
 
 export interface RemainingFleet {
@@ -111,16 +116,52 @@ export interface LongRangeBattleOutput {
 // PHASE 2: CAPITAL SHIP CLASH
 
 export interface ShipDeployment {
-  battleships: UInt64,
-  destroyers: UInt64,
-  fighters: UInt64,
-  drones: UInt64,
-  battleshipsLeft: UInt64,
+  engagingFleet: AttackingFleet | DefendingFleet,
+  extraBattleShips: UInt64
 }
 
 export interface BattlePlan {
   attackingFleet: ShipDeployment;
   defendingFleet: ShipDeployment;
+}
+
+export interface Phase2FleetLoss {
+  battleships: UInt64,
+  destroyers: UInt64,
+  fighters: UInt64,
+  drones: UInt64
+}
+
+export interface Phase2Result {
+  attacker: Phase2FleetLoss,
+  defender: Phase2FleetLoss,
+  didAttackerWin: Bool
+}
+
+// PHASE 3: CARRIER BATTLE
+
+export interface Phase3AttackFleetLoss {
+  battleships: UInt64,
+  destroyers: UInt64,
+  carriers: UInt64,
+  fighters: UInt64,
+  drones: UInt64
+  troopTransports: UInt64,
+}
+
+export interface Phase3DefenseFleetLoss {
+  battleships: UInt64,
+  destroyers: UInt64,
+  carriers: UInt64,
+  fighters: UInt64,
+  drones: UInt64
+  odps: UInt64,
+}
+
+export interface Phase3Result {
+  attacker: Phase3AttackFleetLoss,
+  defender: Phase3DefenseFleetLoss,
+  didAttackerWin: Bool
 }
 
 

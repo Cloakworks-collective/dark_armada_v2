@@ -75,7 +75,28 @@ export namespace Consts {
   export const DESTROYER_PDC_CAP = UInt64.from(200);
   export const CARRIER_PDC_CAP = UInt64.from(500);
 
-  // Carrier capacity - how many fighters and drones can be carried
-  export const CARRIER_FIGHTERS = UInt64.from(40);
+  // Carrier/Troop Transport capacity - how many fighters and drones can be carried
+  export const CARRIER_FIGHTERS = UInt64.from(50);
   export const CARRIER_DRONE = UInt64.from(200);
+  export const TROOP_TRANSPORT_DROPSHIPS = UInt64.from(50);
+
+  // units attack strength
+  export const BATTLESHIP_ATTACK = UInt64.from(500);
+  export const DESTROYER_ATTACK = UInt64.from(300);
+  export const CARRIER_ATTACK = UInt64.from(100);
+  export const FIGHTER_ATTACK = UInt64.from(10);
+  export const DRONE_ATTACK = UInt64.from(5);
+  export const TROOP_TRANSPORT_ATTACK = UInt64.from(0);
+  export const DROPSHIP_ATTACK = UInt64.from(10);
+  export const ODP_ATTACK = UInt64.from(50);
+
+  // units health 
+  export const BATTLESHIP_HEALTH = UInt64.from(800);
+  export const DESTROYER_HEALTH = UInt64.from(200);
+  export const CARRIER_HEALTH = UInt64.from(400);
+  export const FIGHTER_HEALTH = UInt64.from(10);
+  export const DRONE_HEALTH = UInt64.from(5);
+  export const TROOP_TRANSPORT_HEALTH = UInt64.from(100);
+  export const DROPSHIP_HEALTH = UInt64.from(80);
+  export const ODP_HEALTH = UInt64.from(50);
 }
