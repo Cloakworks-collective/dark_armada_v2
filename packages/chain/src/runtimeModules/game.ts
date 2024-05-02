@@ -188,7 +188,7 @@ export class GameRuntime extends RuntimeModule<unknown> {
         );
 
         // STEP 8: verify the attack fleet attack cost
-        const cost_to_attack = attackFleet.attackCost();
+        const cost_to_attack = attackFleet.totalCost();
         assert(
             Consts.MAX_ATTACK_COST.greaterThanOrEqual(cost_to_attack),
             Errors.ATTACK_FLEET_COST

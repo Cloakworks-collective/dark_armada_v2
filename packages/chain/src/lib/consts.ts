@@ -53,23 +53,29 @@ export namespace Consts {
   export const MAX_DEFENSE_COST = Field(10000000); //10_000_000
   export const MAX_ATTACK_COST = Field(10000000); //10_000_000
 
-  // fleet missile launches  
-  export const BATTLESHIP_SALVO = Field(40);
-  export const DESTROYER_SALVO = Field(30);
-  export const NUMBER_OF_MISSILE_SALVOS = Field(5);
+  /** COMPLEX BATTLE CONSTS */
 
-  // Interceptor capacity (anti missile)
-  export const BATTLESHIP_INTERCEPTOR_CAP = Field(20);
-  export const DESTROYER_INTERCEPTOR_CAP = Field(16);
-  export const CARRIER_INTERCEPTOR_CAP = Field(60);
-  export const NUMBER_OF_INTERCEPTOR_SALVOS = Field(5);
+  // fleet missile launches - how many missiles can be launched in a single salvo
+  export const BATTLESHIP_MISSILE_CAP = UInt64.from(40);
+  export const DESTROYER_MISSILE_CAP = UInt64.from(30);
 
-  // PDC (Point Defense Cannon) capacity
-  export const BATTLESHIP_PDC_CAP = Field(300);
-  export const DESTROYER_PDC_CAP = Field(200);
-  export const CARRIER_PDC_CAP = Field(500);
+  // Number of missile salvos fleet can launch
+  export const NUMBER_OF_MISSILE_SALVOS = UInt64.from(5);
 
-  // Carrier capacity
-  export const CARRIER_FIGHTERS = Field(40);
-  export const CARRIER_DRONE = Field(200);
+  // Interceptor capacity - how many interceptors can be launched in a single salvo
+  export const BATTLESHIP_INTERCEPTOR_CAP = UInt64.from(20);
+  export const DESTROYER_INTERCEPTOR_CAP = UInt64.from(16);
+  export const CARRIER_INTERCEPTOR_CAP = UInt64.from(60);
+
+  // Number of interceptor salvos fleet can launch
+  export const NUMBER_OF_INTERCEPTOR_SALVOS = UInt64.from(5);
+
+  // PDC (Point Defense Cannon) saturation capacity 
+  export const BATTLESHIP_PDC_CAP = UInt64.from(300);
+  export const DESTROYER_PDC_CAP = UInt64.from(200);
+  export const CARRIER_PDC_CAP = UInt64.from(500);
+
+  // Carrier capacity - how many fighters and drones can be carried
+  export const CARRIER_FIGHTERS = UInt64.from(40);
+  export const CARRIER_DRONE = UInt64.from(200);
 }

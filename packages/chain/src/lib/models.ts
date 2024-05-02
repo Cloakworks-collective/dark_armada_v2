@@ -25,7 +25,7 @@ export class AttackFleet extends Struct({
     carriers: Field,
     troopTransports: Field,
   }){
-    attackCost(){
+    totalCost(){
       const battleshipCost = this.battleships.mul(Consts.BATTLESHIP_COST);
       const destroyerCost = this.destroyers.mul(Consts.DESTROYER_COST);
       const carrierCost = this.carriers.mul(Consts.CARRIER_COST);
@@ -65,28 +65,43 @@ export class Planet extends Struct({
     attackingFleet: AttackFleet,
   }) {};
 
-  export class LongRangeBattleOutput extends Struct({
-    aMissiles: Field,
-    dMissiles: Field,
-    aIntercepted: Field,
-    dIntercepted: Field,
-    aBattleshipsLost: Field,
-    aDestroyersLost: Field,
-    aCarriersLost: Field,
-    dBattleshipsLost: Field,
-    dDestroyersLost: Field,
-    dCarriersLost: Field
-  }) {};
-
-  export class BattleCalculationOutput extends Struct({
-    phaseOne: LongRangeBattleOutput,
-  }) {};
-
   /** Commonly used Interfaces */
   export interface Coordinates {
     x: Field;
     y: Field;
   }
+
+/** COMPLEX BATTLE OBJECTS */
+
+// PHASE 1: LONG RANGE BATTLE
+
+export interface LongRangeFleetPerformance {
+  missilesLaunched: Field,
+  missilesIntercepted: Field,
+  battleshipsLost: Field,
+  destroyersLost: Field,
+  carriersLost: Field
+}
+
+export interface LongRangeBattleOutput {
+  attacker: LongRangeFleetPerformance,
+  defender: LongRangeFleetPerformance,
+}
+
+// PHASE 2: CAPITAL SHIP CLASH
+
+export interface ShipDeployment {
+  battleshipsEngaging: Field;
+    destroyersEngaging: Field;
+    battleshipsTargetingCarriers: Field;
+}
+
+export interface BattlePlan {
+  attackingFleet: ShipDeployment;
+  defendingFleet: ShipDeployment;
+}
+
+
 
 
 
