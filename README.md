@@ -245,15 +245,30 @@ When the PDCs of a ship reach their capacity and can no longer effectively defen
 
 ![alt text](images/complex_battle3.png)
 
-### Phase 2 - Capital Ship Engagement
+### Phase 2 - Close Quarters Battle (CQB) Capital Fleet Clash
+
+After the initial long-range skirmishes, the fleets close the gap, transitioning to Phase 2 of the battle. The side with the greater number of battleships (the capital ships)  matches their ships one-to-one against the opponent's. In this phase, 50% of the destroyers and half of all assets from the carriers (drones and manned fighters) engage to protect and support the capital ships. 
+
+The fleet with the numerical advantage in battleships uses its excess ships to initiate a flanking maneuver, targeting the enemy's less defended assets (carriers, troop transports and Orbital Defense Platforms). 
 
 ![alt text](images/complex_battle4.png)
 
-### Phase 3 - Carrier Engagement 
+### Phase 3 - Decisive Flanking Maneuver with Carrier Engagement
+
+In Phase 3, the fleet with the numerical advantage in battleships capitalizes on its surplus by launching a comprehensive flanking maneuver. This operation targets the enemy's most vulnerable assets, including carriers, troop transports, and Orbital Defense Platforms. The flanking force comprises the excess battleships, all remaining destroyers, and the entire carrier force along with their mobile assets, such as fighters and drones.
+
+The defending side mobilizes a desperate defense by deploying all available fighters and drones from their carriers. The remaining destroyers, not yet engaged in direct combat, join this defensive effort, focusing on intercepting the flanking forces and protecting their critical assets from the aggressive maneuvers of the opposing fleet. This phase is crucial, as it determines the ability of the defending fleet to withstand the concentrated attack and maintain their strategic positions.
+
+Intense carrier versus carrier action unfolds as both fleets deploy their carriers in full force. This engagement sees carriers on both sides launching their full complement of fighters and drones, engaging in both offensive operations against enemy carriers and defensive maneuvers to protect their own.
 
 ![alt text](images/complex_battle5.png)
 
 ### Phase 4 - Planetfall
+
+In the last and final Phase 4 of the engagement, the attacking side initiates their final assault by deploying all available dropships from their troop transports. These dropships, critical for delivering troops directly to the planetary surface, are heavily escorted by all remaining fighters and drones, survivors of the fierce battles from Phases 1, 2, and 3. This escort is crucial to protect the vulnerable dropships as they navigate through enemy defenses to make planetfall.
+
+Concurrently, the defensive side bolsters their Orbital Defense Platforms (ODPs) with every remaining fighter and drone. These platforms are the last line of defense against the attacking dropships and are strategically vital for preventing the enemy forces from establishing a foothold on the planet. The defenders' primary objective during this phase is to intercept and destroy the incoming dropships.
+
 
 ![alt text](images/complex_battle6.png)
 
